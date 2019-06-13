@@ -1,6 +1,8 @@
 package ru.neoflex.nfcore.base.cdo;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.emf.cdo.net4j.CDONet4jSessionConfiguration;
 import org.eclipse.emf.cdo.net4j.CDONet4jUtil;
 import org.eclipse.emf.cdo.server.CDOServerUtil;
@@ -15,19 +17,15 @@ import org.eclipse.net4j.connector.IConnector;
 import org.eclipse.net4j.db.IDBAdapter;
 import org.eclipse.net4j.db.IDBConnectionProvider;
 import org.eclipse.net4j.db.postgresql.PostgreSQLAdapter;
-import org.eclipse.net4j.http.HTTPUtil;
 import org.eclipse.net4j.http.internal.server.Net4jTransportServlet;
-import org.eclipse.net4j.http.server.HTTPServerUtil;
-import org.eclipse.net4j.http.server.IHTTPAcceptor;
-import org.eclipse.net4j.http.server.INet4jTransportServlet;
 import org.eclipse.net4j.jvm.IJVMConnector;
 import org.eclipse.net4j.jvm.JVMUtil;
+import org.eclipse.net4j.tcp.ITCPAcceptor;
+import org.eclipse.net4j.tcp.TCPUtil;
 import org.eclipse.net4j.util.container.ContainerUtil;
 import org.eclipse.net4j.util.container.IManagedContainer;
 import org.postgresql.ds.PGSimpleDataSource;
-import org.springframework.beans.factory.annotation.Value;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -36,6 +34,8 @@ import java.util.Map;
 import static org.eclipse.emf.cdo.server.CDOServerUtil.createRepository;
 
 public class CDOServer {
+    private static final Log logger = LogFactory.getLog(CDOServer.class);
+
     String url;
     String user;
     String password;
@@ -45,7 +45,6 @@ public class CDOServer {
     private final DataSource dataSource;
     private final String name;
     private IJVMConnector connector;
-    private Net4jTransportServlet transportServlet;
 
     public CDOServer(String name, String url, String user, String password) {
         this.name = name;
@@ -62,15 +61,12 @@ public class CDOServer {
 
         CDOServerUtil.addRepository(container, repository);
         JVMUtil.getAcceptor(container, getName());
-        IHTTPAcceptor acceptor = HTTPServerUtil.getAcceptor(container, getName());
-        transportServlet = new Net4jTransportServlet();
-        transportServlet.setRequestHandler((INet4jTransportServlet.RequestHandler) acceptor);
-        transportServlet.init();
+        ITCPAcceptor itcpAcceptor = TCPUtil.getAcceptor(container, "localhost:8888");
+        logger.info(String.format("TCPAcceptor started on %s:%d", itcpAcceptor.getAddress(), itcpAcceptor.getPort()));
         connector = JVMUtil.getConnector(container, getName());
     }
 
     public void stop() {
-        transportServlet.destroy();
         container.deactivate();
         connector.close();
     }
@@ -133,7 +129,7 @@ public class CDOServer {
         JVMUtil.prepareContainer(container);
         CDONet4jUtil.prepareContainer(container);
         CDONet4jServerUtil.prepareContainer(container);
-        HTTPServerUtil.prepareContainer(container);
+        TCPUtil.prepareContainer(container);
 
         return container;
     }

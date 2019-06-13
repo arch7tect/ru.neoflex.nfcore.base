@@ -15,6 +15,7 @@ abstract class ModuleContainer {
 class Application extends ModuleContainer {
     String name
     contains Form[] forms
+    refers Application[] links
 }
 
 class Module extends ModuleContainer {
@@ -26,7 +27,7 @@ abstract class Form {
     String name
 }
 
-abstract class EObjectForm extends EObject {
+abstract class EObjectForm extends Form {
     refers EClass eClass
 }
 
