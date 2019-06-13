@@ -6,6 +6,7 @@
     rootExtendsInterface="org.eclipse.emf.cdo.CDOObject"
 )
 package ru.neoflex.nfcore.base.application
+import org.eclipse.emf.ecore.EClass
 
 abstract class ModuleContainer {
     contains Module[] modules
@@ -13,8 +14,24 @@ abstract class ModuleContainer {
 
 class Application extends ModuleContainer {
     String name
+    contains Form[] forms
 }
 
 class Module extends ModuleContainer {
     String name
+    refers Form[] forms
+}
+
+abstract class Form {
+    String name
+}
+
+abstract class EObjectForm extends EObject {
+    refers EClass eClass
+}
+
+class EditForm extends EObjectForm {
+}
+
+class ListForm extends EObjectForm {
 }

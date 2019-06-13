@@ -1,0 +1,13 @@
+@GenModel(
+    bundleManifest="false",
+    modelDirectory="ru.neoflex.nfcore.base/src/main/java-gen",
+    complianceLevel="7.0",
+    rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl",
+    rootExtendsInterface="org.eclipse.emf.cdo.CDOObject"
+)
+package ru.neoflex.nfcore.base.report
+import ru.neoflex.nfcore.base.application.Form
+
+class Report extends Form {
+}
+

@@ -112,7 +112,19 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.9</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.emf.cdo.server</groupId>
+            <artifactId>ocl</artifactId>
+            <version>4.1.0</version>
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>jabylon-repo</id>
+            <url>http://www.jabylon.org/maven/</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
