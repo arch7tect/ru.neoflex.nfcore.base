@@ -2,8 +2,8 @@
     bundleManifest="false",
     modelDirectory="ru.neoflex.nfcore.base/src/main/java-gen",
     complianceLevel="7.0",
-    rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl",
-    rootExtendsInterface="org.eclipse.emf.cdo.CDOObject"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.EObjectImpl",
+    rootExtendsInterface="org.eclipse.emf.ecore.EObject"
 )
 package ru.neoflex.nfcore.base.application
 import org.eclipse.emf.ecore.EClass
@@ -28,7 +28,7 @@ abstract class Form {
 }
 
 abstract class EObjectForm extends Form {
-    refers EClass eClass
+    refers EClass objectType
 }
 
 class EditForm extends EObjectForm {

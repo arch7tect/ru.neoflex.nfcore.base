@@ -97,26 +97,10 @@
             <version>${ecore-xcore-lib-version}</version>
         </dependency>
 
-        <!-- cdo -->
         <dependency>
-            <groupId>org.eclipselabs</groupId>
-            <artifactId>cdo</artifactId>
-            <version>4.6.2</version>
-            <type>pom</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipselabs</groupId>
-            <artifactId>net4j.jvm</artifactId>
-            <version>4.4.0</version>
-            <type>pom</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipselabs</groupId>
-            <artifactId>net4j.postgresql</artifactId>
-            <version>4.6.2</version>
-            <type>pom</type>
+            <groupId>org.emfjson</groupId>
+            <artifactId>emfjson-couchdb</artifactId>
+            <version>0.3.0-arch7tect</version>
         </dependency>
 
         <dependency>
@@ -124,12 +108,6 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.9</version>
         </dependency>
-
-        <!--<dependency>
-            <groupId>org.eclipse.emf.cdo.server</groupId>
-            <artifactId>ocl</artifactId>
-            <version>4.1.0</version>
-        </dependency>-->
     </dependencies>
 
     <build>
