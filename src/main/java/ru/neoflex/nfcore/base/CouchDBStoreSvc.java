@@ -136,21 +136,25 @@ public class CouchDBStoreSvc {
                 new ValueWriter<EObject, Object>() {
                     @Override
                     public Object writeValue(EObject eObject, SerializerProvider context) {
-                        Resource resource = EMFContext.getResource(context, eObject);
                         URI eObjectURI = EMFContext.getURI(context, eObject);
-                        if (resource == null) {
+                        if (eObjectURI == null) {
                             return null;
                         }
-                        URI resourceURI = resource.getURI();
                         String id = "";
-                        if (resourceURI.segmentCount() > 0) {
-                            id = resourceURI.segment(0);
+                        if (eObjectURI.segmentCount() > 0) {
+                            id = eObjectURI.segment(0);
                         }
-                        String fragment = resource.getURIFragment(eObject);
-                        while (fragment.startsWith("#")) {
-                            fragment = fragment.substring(1);
+                        if (eObjectURI.hasQuery()) {
+                            id = id + "?" + eObjectURI.query();
                         }
-                        return id + "#" + fragment;
+                        String fragment = eObjectURI.fragment();
+                        if (fragment != null) {
+                            while (fragment.startsWith("#")) {
+                                fragment = fragment.substring(1);
+                            }
+                            id = id + "#" + fragment;
+                        }
+                        return id;
                     }
                 }));
         emfModule.setReferenceInfo(new EcoreReferenceInfo("_ref"));
