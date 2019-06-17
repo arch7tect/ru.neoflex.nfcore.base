@@ -14,7 +14,7 @@ abstract class ModuleContainer {
 
 class Application extends ModuleContainer {
     String name
-    contains Form[] forms
+    contains Form[] forms opposite application
     refers Application[] links
 }
 
@@ -25,6 +25,7 @@ class Module extends ModuleContainer {
 
 abstract class Form {
     String name
+    container Application application opposite forms
 }
 
 abstract class EObjectForm extends Form {
