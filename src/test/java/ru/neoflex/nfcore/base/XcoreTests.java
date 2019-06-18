@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.neoflex.nfcore.base.test.application.*;
+import ru.neoflex.nfcore.base.test.application.Module;
 import ru.neoflex.nfcore.base.test.report.Report;
 import ru.neoflex.nfcore.base.test.report.ReportFactory;
 
