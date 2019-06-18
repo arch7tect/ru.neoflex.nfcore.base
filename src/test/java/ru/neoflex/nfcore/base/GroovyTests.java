@@ -6,11 +6,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.neoflex.nfcore.base.application.Application;
-import ru.neoflex.nfcore.base.application.ApplicationFactory;
-import ru.neoflex.nfcore.base.application.Form;
-import ru.neoflex.nfcore.base.report.Report;
-import ru.neoflex.nfcore.base.report.ReportFactory;
+import ru.neoflex.nfcore.base.test.application.Application;
+import ru.neoflex.nfcore.base.test.application.ApplicationFactory;
+import ru.neoflex.nfcore.base.test.application.Form;
+import ru.neoflex.nfcore.base.test.report.ReportFactory;
 
 import java.util.HashMap;
 import java.util.Map;
