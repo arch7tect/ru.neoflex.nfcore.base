@@ -24,92 +24,80 @@
         <emf-codegen-version>2.14.0</emf-codegen-version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>jabylon-repo</id>
-            <name>jabylon-repo</name>
-            <url>http://www.jabylon.org/maven</url>
-        </repository>
-        <repository>
-            <id>IRISA-repo</id>
-            <name>IRISA Repository</name>
-            <url>http://maven.irisa.fr/artifactory/list/kermeta-public-release/</url>
-        </repository>
-    </repositories>
+	<repositories>
+		<repository>
+			<id>jabylon-repo</id>
+			<name>jabylon-repo</name>
+			<url>http://www.jabylon.org/maven</url>
+		</repository>
+		<repository>
+			<id>IRISA-repo</id>
+			<name>IRISA Repository</name>
+			<url>http://maven.irisa.fr/artifactory/list/kermeta-public-release/</url>
+		</repository>
+	</repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-groovy-templates</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-rest</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- emf -->
-        <dependency>
-            <groupId>org.emfjson</groupId>
-            <artifactId>emfjson-jackson</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.emf</groupId>
-            <artifactId>org.eclipse.emf.ecore.xcore.lib</artifactId>
-            <version>${ecore-xcore-lib-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.emfjson</groupId>
-            <artifactId>emfjson-couchdb</artifactId>
-            <version>0.3.0-arch7tect</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.9</version>
-        </dependency>
-    </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- emf -->
+		<dependency>
+			<groupId>org.emfjson</groupId>
+			<artifactId>emfjson-jackson</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.ecore.xcore.lib</artifactId>
+			<version>${ecore-xcore-lib-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.emfjson</groupId>
+			<artifactId>emfjson-couchdb</artifactId>
+			<version>0.3.0-arch7tect</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>2.5.7</version>
+			<type>pom</type>
+		</dependency>
+	</dependencies>
 
     <build>
         <plugins>
@@ -125,7 +113,6 @@
                     <filesets>
                         <fileset>
                             <directory>src/main/java-gen</directory>
-                            <directory>src/test/java-gen</directory>
                         </fileset>
                     </filesets>
                 </configuration>
@@ -169,6 +156,7 @@
                 <version>${xtext-version}</version>
                 <executions>
                     <execution>
+                        <id>generate-sources</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate</goal>
@@ -254,12 +242,14 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <!--
             <plugin>
                 <groupId>org.eclipse.xtext</groupId>
                 <artifactId>xtext-maven-plugin</artifactId>
                 <version>${xtext-version}</version>
                 <executions>
                     <execution>
+                        <id>generate-test-sources</id>
                         <phase>generate-test-sources</phase>
                         <goals>
                             <goal>generate</goal>
@@ -267,6 +257,9 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <sourceRoots>
+                        <root>${basedir}/src/test/resources/metamodel</root>
+                    </sourceRoots>
                     <languages>
                         <language>
                             <setup>org.eclipse.xtext.ecore.EcoreSupport</setup>
@@ -283,9 +276,6 @@
                             </outputConfigurations>
                         </language>
                     </languages>
-                    <sourceRoots>
-                        <root>${basedir}/src/test/resources/metamodel</root>
-                    </sourceRoots>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -307,11 +297,6 @@
                         <groupId>org.eclipse.emf</groupId>
                         <artifactId>org.eclipse.emf.codegen.ecore.xtext</artifactId>
                         <version>${ecore-xtext-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.xtext</groupId>
-                        <artifactId>org.eclipse.xtext.builder.standalone</artifactId>
-                        <version>${xtext-version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.eclipse.emf</groupId>
@@ -349,6 +334,30 @@
                         <version>${ecore-xcore-lib-version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            -->
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>1.7.1</version>
+                <configuration>
+                    <stubsOutputDirectory>${project.build.directory}/generated-groovy-stubs</stubsOutputDirectory>
+                    <testStubsOutputDirectory>${project.build.directory}/generated-groovy-test-stubs</testStubsOutputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>addSources</goal>
+                            <goal>addTestSources</goal>
+                            <goal>generateStubs</goal>
+                            <goal>compile</goal>
+                            <goal>generateTestStubs</goal>
+                            <goal>compileTests</goal>
+                            <goal>removeStubs</goal>
+                            <goal>removeTestStubs</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

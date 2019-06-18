@@ -10,5 +10,6 @@ package ru.neoflex.nfcore.base.auth
 class User {
     String name
     String password
+    String[] roles
 }
 
