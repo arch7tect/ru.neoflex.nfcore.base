@@ -1,5 +1,7 @@
 package ru.neoflex.nfcore.base.application
 
+import ru.neoflex.nfcore.base.test.application.Application
+
 class ApplicationInit {
     {
         Application.metaClass.getFormsCount {->
