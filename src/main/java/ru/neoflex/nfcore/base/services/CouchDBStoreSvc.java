@@ -1,4 +1,4 @@
-package ru.neoflex.nfcore.base;
+package ru.neoflex.nfcore.base.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import ru.neoflex.nfcore.base.components.IPackageRegistry;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -158,15 +159,15 @@ public class CouchDBStoreSvc {
         return emfModule;
     }
 
-    Resource getResource() {
+    public Resource getResource() {
         return getResource(null, null);
     }
 
-    Resource getResource(String id) {
+    public Resource getResource(String id) {
         return getResource(id, null);
     }
 
-    Resource getResource(String id, String rev) {
+    public Resource getResource(String id, String rev) {
         URI uri = baseURI;
         if (id == null) {
             uri = uri.appendSegment("");
@@ -180,11 +181,11 @@ public class CouchDBStoreSvc {
         return getResourceSet().createResource(uri);
     }
 
-    Resource save(EObject object) {
+    public Resource save(EObject object) {
         return save(object, null, null);
     }
 
-    Resource save(EObject object, String id, String rev) {
+    public Resource save(EObject object, String id, String rev) {
         Resource resource = getResource(id, rev);
         resource.getContents().add(object);
         try {
@@ -194,10 +195,10 @@ public class CouchDBStoreSvc {
             throw new RuntimeException(e);
         }
     }
-    Resource create(EObject object) {
+    public Resource create(EObject object) {
         return save(object, null, null);
     }
-    Resource loadResource(String id) {
+    public Resource loadResource(String id) {
         Resource resource = getResource(id, null);
         try {
             resource.load(null);
@@ -207,7 +208,7 @@ public class CouchDBStoreSvc {
         }
     }
 
-    EObject loadEObject(String ref) {
+    public EObject loadEObject(String ref) {
         URI uri = URI.createURI(baseURI.toString() + ref);
         String fragment = uri.fragment();
         if (fragment == null) {
@@ -224,7 +225,7 @@ public class CouchDBStoreSvc {
         }
     }
 
-    void delete(String id, String rev) {
+    public void delete(String id, String rev) {
         Resource resource = getResource(id, rev);
         try {
             if (rev == null) {

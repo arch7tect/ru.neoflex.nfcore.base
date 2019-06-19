@@ -6,10 +6,89 @@
     rootExtendsInterface="org.eclipse.emf.ecore.EObject"
 )
 package ru.neoflex.nfcore.base.auth
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.EPackage
+import org.eclipse.emf.ecore.EClass
 
-class User {
+class Role {
     String name
-    String password
-    String[] roles
+    String description
+    contains Permission[] grants opposite role
+
+    op GrantType permitted(ActionType actionType, EObject eObject)
 }
 
+abstract class Permission {
+    container Role role opposite grants
+    GrantType grantType
+    ActionType[] actionTypes
+
+    op Integer priority()
+    op GrantType permitted(ActionType actionType, EObject eObject)
+}
+
+class AllPermission extends Permission {
+    op Integer priority() {0}
+}
+
+class PackagePermission extends Permission {
+    refers EPackage ePackage
+    op Integer priority() {1}
+}
+
+class ClassPermission extends Permission {
+    refers EClass eClass
+    op Integer priority() {2}
+}
+
+class ReferencePermission extends Permission {
+    refers EObject referencedEObject
+    op Integer priority() {3}
+}
+
+class ObjectPermission extends Permission {
+    refers EObject eObject
+    op Integer priority() {4}
+}
+
+enum GrantType {
+    UNDEFINED
+    GRANT
+    REVOKE
+}
+
+enum ActionType {
+    ALL
+    READ
+    WRITE
+    CALL
+}
+
+class GrantPermission {
+    refers Permission permission
+}
+
+abstract class Authority {
+    String name
+    refers Role[] roles
+}
+
+abstract class Authenticator {
+    refers User user opposite authenticators
+    Boolean disabled
+}
+
+class LoginAuthenticator extends Authenticator {
+    String login
+    String password
+}
+
+class User extends Authority {
+    String email
+    refers Authenticator[] authenticators opposite user
+    refers Group[] groups opposite users
+}
+
+class Group extends Authority {
+    refers User[] users opposite groups
+}

@@ -1,15 +1,14 @@
 package ru.neoflex.nfcore.base;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 import groovy.util.Eval;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.neoflex.nfcore.base.test.application.Application;
-import ru.neoflex.nfcore.base.test.application.ApplicationFactory;
-import ru.neoflex.nfcore.base.test.application.Form;
-import ru.neoflex.nfcore.base.test.report.ReportFactory;
+import ru.neoflex.nfcore.base.auth.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,17 +26,18 @@ public class GroovyTests {
 
     @Test
     public void invokeDynamic() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        Thread.currentThread().getContextClassLoader().loadClass("ru.neoflex.nfcore.base.application.ApplicationInit").newInstance();
-        Thread.currentThread().getContextClassLoader().loadClass("ru.neoflex.nfcore.base.report.ReportInit").newInstance();
-        Map params = new HashMap();
-        Application application = ApplicationFactory.eINSTANCE.createApplication();
-        application.setName("MyApp");
-        Form form1 = ReportFactory.eINSTANCE.createReport();
-        form1.setName("MyReport");
-        application.getForms().add(form1);
-        Object result = Eval.xyz(application, "title", params, "x.\"${y}\"(z)").toString();
-        Assert.assertEquals("MyApp(links: 0, forms: 1)", result);
-        Object result2 = Eval.xyz(application, "title2", params, "x.\"${y}\"(z)").toString();
-        Assert.assertEquals("MyApp(links: 0, forms: 1) Hello from report MyApp.MyReport", result2);
+        Role superAdmin = AuthFactory.eINSTANCE.createRole();
+        superAdmin.setName("SuperAdmin");
+        Permission allPermission = AuthFactory.eINSTANCE.createAllPermission();
+        allPermission.setGrantType(GrantType.GRANT);
+        allPermission.getActionTypes().add(ActionType.ALL);
+        superAdmin.getGrants().add(allPermission);
+        Binding b = new Binding();
+        b.setVariable("role", superAdmin);
+        b.setVariable("actionType", ActionType.CALL);
+        b.setVariable("eObject", superAdmin);
+        GroovyShell sh = new GroovyShell(b);
+        Object result =  sh.evaluate("role.permitted(actionType, eObject)");
+        Assert.assertEquals(GrantType.GRANT, result);
     }
 }

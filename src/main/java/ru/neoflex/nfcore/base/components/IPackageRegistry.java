@@ -1,4 +1,4 @@
-package ru.neoflex.nfcore.base;
+package ru.neoflex.nfcore.base.components;
 
 import org.eclipse.emf.ecore.EPackage;
 

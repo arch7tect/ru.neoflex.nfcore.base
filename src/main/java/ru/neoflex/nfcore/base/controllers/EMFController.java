@@ -1,10 +1,11 @@
-package ru.neoflex.nfcore.base;
+package ru.neoflex.nfcore.base.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.neoflex.nfcore.base.services.CouchDBStoreSvc;
 
 @RestController()
 @RequestMapping("/emf")
