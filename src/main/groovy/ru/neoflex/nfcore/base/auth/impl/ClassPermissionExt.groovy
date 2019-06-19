@@ -1,8 +1,10 @@
-package ru.neoflex.nfcore.base.auth
+package ru.neoflex.nfcore.base.auth.impl
 
 import org.eclipse.emf.ecore.EObject
+import ru.neoflex.nfcore.base.auth.ActionType
+import ru.neoflex.nfcore.base.auth.ClassPermission
 
-class ClassPermissionInit {
+class ClassPermissionExt extends ClassPermissionImpl{
     {
         ClassPermission.metaClass.permitted = { ActionType actionType, EObject eObject ->
             ClassPermission permission = (ClassPermission) delegate;

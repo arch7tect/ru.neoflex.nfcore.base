@@ -1,11 +1,11 @@
 package ru.neoflex.nfcore.base;
 
-import org.eclipse.emf.ecore.EPackage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.neoflex.nfcore.base.auth.*;
+import ru.neoflex.nfcore.base.auth.impl.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

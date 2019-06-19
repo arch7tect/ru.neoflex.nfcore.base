@@ -1,8 +1,10 @@
-package ru.neoflex.nfcore.base.auth
+package ru.neoflex.nfcore.base.auth.impl
 
 import org.eclipse.emf.ecore.EObject
+import ru.neoflex.nfcore.base.auth.ActionType
+import ru.neoflex.nfcore.base.auth.PackagePermission
 
-class PackagePermissionInit {
+class PackagePermissionExt extends PackagePermissionImpl {
     {
         PackagePermission.metaClass.permitted = { ActionType actionType, EObject eObject ->
             PackagePermission permission = (PackagePermission) delegate;

@@ -26,14 +26,15 @@ public class GroovySvc {
                 String nsURI = ePackage.getNsURI();
                 for (EClassifier eClassifier: ePackage.getEClassifiers()) {
                     String name = eClassifier.getName();
-                    String initClassName = nsURI + "." + name + "Init";
+                    String initClassName = nsURI + ".impl." + name + "Ext";
                     try {
                         Thread.currentThread().getContextClassLoader().loadClass(initClassName).newInstance();
                         logger.info(String.format("%s: instantiated", initClassName));
-                    } catch (InstantiationException e) {
-                    } catch (IllegalAccessException e) {
+                    }
+                    catch (ClassNotFoundException e) {
+                    }
+                    catch (Exception e) {
                         logger.error(String.format("%s: ", initClassName), e);
-                    } catch (ClassNotFoundException e) {
                     }
                 }
             }
