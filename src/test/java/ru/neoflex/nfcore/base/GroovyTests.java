@@ -1,14 +1,18 @@
 package ru.neoflex.nfcore.base;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eclipse.emf.ecore.EObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.neoflex.nfcore.base.auth.*;
+import ru.neoflex.nfcore.base.services.Context;
+import ru.neoflex.nfcore.base.services.Groovy;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,19 +22,18 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class GroovyTests {
+    @Autowired
+    Groovy groovy;
+    @Autowired
+    Context context;
 
     @Test
     public void invokeEval() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         Role superAdmin = createSuperAdminRole();
-        Binding b = new Binding();
-        b.setVariable("instance", superAdmin);
-        b.setVariable("method", "permitted");
         List args = new ArrayList();
         args.add(ActionType.CALL);
         args.add(superAdmin);
-        b.setVariable("args", args);
-        GroovyShell sh = new GroovyShell(b);
-        Object result =  sh.evaluate("instance.\"$method\"(*args)");
+        Object result =  groovy.eval(superAdmin, "permitted", args);
         Assert.assertEquals(GrantStatus.GRANTED, result);
     }
 
@@ -59,4 +62,20 @@ public class GroovyTests {
         Object result = declaredMethod.invoke(null, new Object[]{role, actionType, role});
         Assert.assertEquals(GrantStatus.GRANTED, result);
     }
+
+    @Test
+    public void invokeStatic() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        Role superAdmin = createSuperAdminRole();
+        ObjectMapper mapper = context.getMapper();
+        ObjectNode args = mapper.createObjectNode();
+        JsonNode superAdminNode = mapper.valueToTree(superAdmin);
+        args.set("role", superAdminNode);
+        args.set("actionType", mapper.valueToTree(ActionType.CALL));
+        args.set("eObject", superAdminNode);
+        String svcClassName = "ru.neoflex.nfcore.base.auth.endpoint.Test";
+        String methodName = "permitted";
+        Object result =  groovy.callStatic(svcClassName, methodName, args);
+        Assert.assertEquals(GrantStatus.GRANTED, result);
+    }
+
 }

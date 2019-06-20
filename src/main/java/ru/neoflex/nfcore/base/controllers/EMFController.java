@@ -5,19 +5,22 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.neoflex.nfcore.base.services.CouchDBStoreSvc;
+import ru.neoflex.nfcore.base.services.Context;
+import ru.neoflex.nfcore.base.services.Store;
 
 @RestController()
 @RequestMapping("/emf")
 public class EMFController {
     @Autowired
-    CouchDBStoreSvc store;
+    Store store;
+    @Autowired
+    Context context;
     @Autowired
     ObjectMapper objectMapper;
 
     @GetMapping("/query")
     Resource query(@RequestParam String language, @RequestParam String text) {
-        return store.getResource();
+        return store.createResource();
     }
 
     @GetMapping("/resource/{id}")
@@ -28,7 +31,7 @@ public class EMFController {
 
     @GetMapping("/object")
     EObject getObject(@RequestParam String ref) {
-        EObject eObject = store.loadEObject(ref);
+        EObject eObject = store.loadEObjectByRef(ref);
         return eObject;
     }
 }

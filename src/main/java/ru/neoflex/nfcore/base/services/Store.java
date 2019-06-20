@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CouchDBStoreSvc {
+public class Store {
     @Value("${couchdb.host:localhost}")
     String host;
     @Value("${couchdb.port:5984}")
@@ -87,7 +87,7 @@ public class CouchDBStoreSvc {
     }
 
     public ObjectMapper getMapper() {
-        com.fasterxml.jackson.databind.ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(module);
         return mapper;
     }
@@ -159,15 +159,15 @@ public class CouchDBStoreSvc {
         return emfModule;
     }
 
-    public Resource getResource() {
-        return getResource(null, null);
+    public Resource createResource() {
+        return createResource(null, null);
     }
 
-    public Resource getResource(String id) {
-        return getResource(id, null);
+    public Resource createResource(String id) {
+        return createResource(id, null);
     }
 
-    public Resource getResource(String id, String rev) {
+    public Resource createResource(String id, String rev) {
         URI uri = baseURI;
         if (id == null) {
             uri = uri.appendSegment("");
@@ -181,12 +181,21 @@ public class CouchDBStoreSvc {
         return getResourceSet().createResource(uri);
     }
 
+    public Resource createResource(URI uri) {
+        uri = uri.trimFragment().trimQuery();
+        return getResourceSet().createResource(uri);
+    }
+
+    public URI getUriByRef(String ref) {
+        return URI.createURI(baseURI.toString() + ref);
+    }
+
     public Resource save(EObject object) {
         return save(object, null, null);
     }
 
     public Resource save(EObject object, String id, String rev) {
-        Resource resource = getResource(id, rev);
+        Resource resource = createResource(id, rev);
         resource.getContents().add(object);
         try {
             resource.save(null);
@@ -195,11 +204,13 @@ public class CouchDBStoreSvc {
             throw new RuntimeException(e);
         }
     }
+
     public Resource create(EObject object) {
         return save(object, null, null);
     }
+
     public Resource loadResource(String id) {
-        Resource resource = getResource(id, null);
+        Resource resource = createResource(id, null);
         try {
             resource.load(null);
             return resource;
@@ -208,25 +219,24 @@ public class CouchDBStoreSvc {
         }
     }
 
-    public EObject loadEObject(String ref) {
-        URI uri = URI.createURI(baseURI.toString() + ref);
-        String fragment = uri.fragment();
-        if (fragment == null) {
-            fragment = "/";
-        }
-        uri = uri.trimFragment().trimQuery();
-        Resource resource = getResourceSet().createResource(uri);
+    public EObject loadEObjectByRef(String ref) {
+        URI uri = getUriByRef(ref);
+        Resource resource = createResource(uri);
         try {
             resource.load(null);
+            String fragment = uri.fragment();
+            if (fragment == null) {
+                fragment = "/";
+            }
             EObject eObject = resource.getEObject(fragment);
             return eObject;
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void delete(String id, String rev) {
-        Resource resource = getResource(id, rev);
+        Resource resource = createResource(id, rev);
         try {
             if (rev == null) {
                 resource.load(null);
