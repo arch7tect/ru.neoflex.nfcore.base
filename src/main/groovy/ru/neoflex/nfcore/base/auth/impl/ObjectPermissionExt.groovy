@@ -2,6 +2,7 @@ package ru.neoflex.nfcore.base.auth.impl
 
 import org.eclipse.emf.ecore.EObject
 import ru.neoflex.nfcore.base.auth.ActionType
+import ru.neoflex.nfcore.base.auth.GrantStatus
 import ru.neoflex.nfcore.base.auth.ObjectPermission
 
 class ObjectPermissionExt extends ObjectPermissionImpl {
@@ -10,9 +11,9 @@ class ObjectPermissionExt extends ObjectPermissionImpl {
             ObjectPermission permission = (ObjectPermission) delegate;
             if (eObject == permission.getEObject() &&
                     (permission.actionTypes.contains(ActionType.ALL) || permission.actionTypes.contains(actionType))) {
-                return permission.grantType
+                return permission.grantStatus
             }
-            return GrantType.UNDEFINED
-        }
+            return GrantStatus.UNDEFINED
+        } as Closure<GrantStatus>
     }
 }

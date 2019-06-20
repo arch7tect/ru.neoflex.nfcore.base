@@ -3,14 +3,12 @@ package ru.neoflex.nfcore.base;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.eclipse.emf.ecore.EObject;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.neoflex.nfcore.base.auth.*;
-import ru.neoflex.nfcore.base.auth.impl.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,15 +31,14 @@ public class GroovyTests {
         b.setVariable("args", args);
         GroovyShell sh = new GroovyShell(b);
         Object result =  sh.evaluate("instance.\"$method\"(*args)");
-        Assert.assertEquals(GrantType.GRANT, result);
+        Assert.assertEquals(GrantStatus.GRANTED, result);
     }
 
-    @NotNull
     public static Role createSuperAdminRole() {
         Role superAdmin = AuthFactory.eINSTANCE.createRole();
         superAdmin.setName("SuperAdmin");
         Permission allPermission = AuthFactory.eINSTANCE.createAllPermission();
-        allPermission.setGrantType(GrantType.GRANT);
+        allPermission.setGrantStatus(GrantStatus.GRANTED);
         allPermission.getActionTypes().add(ActionType.ALL);
         superAdmin.getGrants().add(allPermission);
         return superAdmin;
@@ -60,6 +57,6 @@ public class GroovyTests {
         Class scriptClass = Thread.currentThread().getContextClassLoader().loadClass(svcClassName);
         Method declaredMethod = scriptClass.getDeclaredMethod(methodName, new Class[] {Role.class, ActionType.class, EObject.class} );
         Object result = declaredMethod.invoke(null, new Object[]{role, actionType, role});
-        Assert.assertEquals(GrantType.GRANT, result);
+        Assert.assertEquals(GrantStatus.GRANTED, result);
     }
 }

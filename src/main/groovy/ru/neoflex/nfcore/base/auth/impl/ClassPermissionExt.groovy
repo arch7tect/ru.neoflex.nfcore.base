@@ -3,16 +3,17 @@ package ru.neoflex.nfcore.base.auth.impl
 import org.eclipse.emf.ecore.EObject
 import ru.neoflex.nfcore.base.auth.ActionType
 import ru.neoflex.nfcore.base.auth.ClassPermission
+import ru.neoflex.nfcore.base.auth.GrantStatus
 
 class ClassPermissionExt extends ClassPermissionImpl{
     {
         ClassPermission.metaClass.permitted = { ActionType actionType, EObject eObject ->
-            ClassPermission permission = (ClassPermission) delegate;
+            ClassPermission permission = (ClassPermission) delegate
             if (eObject.eClass() == permission.getEClass() &&
                     (permission.actionTypes.contains(ActionType.ALL) || permission.actionTypes.contains(actionType))) {
-                return permission.grantType
+                return permission.grantStatus
             }
-            return GrantType.UNDEFINED
-        }
+            return GrantStatus.UNDEFINED
+        } as Closure<GrantStatus>
     }
 }

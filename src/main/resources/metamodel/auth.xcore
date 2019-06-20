@@ -15,16 +15,16 @@ class Role {
     String description
     contains Permission[] grants opposite role
 
-    op GrantType permitted(ActionType actionType, EObject eObject)
+    op GrantStatus permitted(ActionType actionType, EObject eObject)
 }
 
 abstract class Permission {
     container Role role opposite grants
-    GrantType grantType
+    GrantStatus grantStatus
     ActionType[] actionTypes
 
     op Integer priority()
-    op GrantType permitted(ActionType actionType, EObject eObject)
+    op GrantStatus permitted(ActionType actionType, EObject eObject)
 }
 
 class AllPermission extends Permission {
@@ -51,10 +51,10 @@ class ObjectPermission extends Permission {
     op Integer priority() {4}
 }
 
-enum GrantType {
+enum GrantStatus {
     UNDEFINED
-    GRANT
-    REVOKE
+    GRANTED
+    REVOKED
 }
 
 enum ActionType {
