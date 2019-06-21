@@ -92,7 +92,7 @@ public class Store {
         return mapper;
     }
 
-    public List<EPackage> getPackages() {
+    public List<EPackage> getEPackages() {
         List<EPackage> result = new ArrayList<>();
         if (packageRegistryList != null) {
             for (IPackageRegistry registry: packageRegistryList) {
@@ -109,7 +109,7 @@ public class Store {
         ResourceSet resourceSet = new ResourceSetImpl();
         resourceSet.getPackageRegistry()
                 .put(EcorePackage.eNS_URI, EcorePackage.eINSTANCE);
-        for (EPackage ePackage: getPackages()) {
+        for (EPackage ePackage: getEPackages()) {
             resourceSet.getPackageRegistry()
                     .put(ePackage.getNsURI(), ePackage);
         }
