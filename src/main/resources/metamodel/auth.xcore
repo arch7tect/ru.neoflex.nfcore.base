@@ -37,7 +37,7 @@ class PackagePermission extends Permission {
 }
 
 class ClassPermission extends Permission {
-    refers EClass eClass
+    refers EClass theClass
     op Integer priority() {2}
 }
 

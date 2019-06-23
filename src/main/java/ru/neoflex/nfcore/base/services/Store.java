@@ -129,7 +129,7 @@ public class Store {
     EMFModule getModule() {
         EMFModule emfModule = new EMFModule();
         emfModule.configure(EMFModule.Feature.OPTION_USE_ID, true);
-        emfModule.setTypeInfo(new EcoreTypeInfo("_type"));
+        emfModule.setTypeInfo(new EcoreTypeInfo("eClass"));
         emfModule.setIdentityInfo(new EcoreIdentityInfo("_id",
                 new ValueWriter<EObject, Object>() {
                     @Override
@@ -155,7 +155,7 @@ public class Store {
                         return id;
                     }
                 }));
-        emfModule.setReferenceInfo(new EcoreReferenceInfo("_ref"));
+        emfModule.setReferenceInfo(new EcoreReferenceInfo("$ref"));
         return emfModule;
     }
 

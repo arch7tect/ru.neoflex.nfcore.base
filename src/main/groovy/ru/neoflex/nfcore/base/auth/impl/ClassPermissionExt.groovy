@@ -9,7 +9,7 @@ class ClassPermissionExt extends ClassPermissionImpl{
     {
         ClassPermission.metaClass.permitted = { ActionType actionType, EObject eObject ->
             ClassPermission permission = (ClassPermission) delegate
-            if (eObject.eClass() == permission.getEClass() &&
+            if (eObject.eClass() == permission.getTheClass() &&
                     (permission.actionTypes.contains(ActionType.ALL) || permission.actionTypes.contains(actionType))) {
                 return permission.grantStatus
             }
