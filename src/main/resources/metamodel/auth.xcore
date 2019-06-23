@@ -84,7 +84,7 @@ class PasswordAuthenticator extends Authenticator {
 
 class User extends Authority {
     String email
-    refers Authenticator[] authenticators opposite user
+    contains Authenticator[] authenticators opposite user
     refers Group[] groups opposite users
 }
 

@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.emfjson.couchdb.CouchHandler;
 import org.emfjson.couchdb.client.CouchClient;
 import org.emfjson.couchdb.client.DB;
@@ -150,9 +151,9 @@ public class Store {
                             while (fragment.startsWith("#")) {
                                 fragment = fragment.substring(1);
                             }
-                            id = id + "#" + fragment;
                         }
-                        return id;
+                        id = id + "#" + fragment;
+                        return fragment;
                     }
                 }));
         emfModule.setReferenceInfo(new EcoreReferenceInfo("$ref"));
@@ -229,6 +230,7 @@ public class Store {
                 fragment = "/";
             }
             EObject eObject = resource.getEObject(fragment);
+            //EcoreUtil.resolveAll(eObject);
             return eObject;
         } catch (IOException e) {
             throw new RuntimeException(e);
