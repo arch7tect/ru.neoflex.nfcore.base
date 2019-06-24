@@ -3,6 +3,7 @@ package ru.neoflex.nfcore.base.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -10,7 +11,6 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.emfjson.couchdb.CouchHandler;
 import org.emfjson.couchdb.client.CouchClient;
 import org.emfjson.couchdb.client.DB;
@@ -31,7 +31,9 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class Store {
@@ -65,6 +67,35 @@ public class Store {
             JsonNode status = db.create();
             checkStatus(status);
         }
+        initDB();
+    }
+
+    private void initDB() throws IOException {
+        CouchClient client = getClient();
+        Set<String> indexSet = getIndexes(client);
+        ObjectMapper mapper = getMapper();
+        final String idx_eClass_name = "idx_eClass_name";
+        if (!indexSet.contains(idx_eClass_name)) {
+            JsonNode indexNode = mapper.createObjectNode()
+                    .put("name", idx_eClass_name)
+                    .set("index", mapper.createObjectNode()
+                            .set("fields", mapper.createArrayNode()
+                                    .add("contents.eClass")
+                                    .add("contents.name")
+                            )
+                    );
+            client.post(defaultDbname + "/_index", mapper.writeValueAsString(indexNode));
+        }
+    }
+
+    private Set<String> getIndexes(CouchClient client) throws IOException {
+        Set<String> indexSet = new HashSet<>();
+        JsonNode content = client.content(defaultDbname + "/_index");
+        ArrayNode indexes = (ArrayNode) content.get("indexes");
+        for (JsonNode index : indexes) {
+            indexSet.add(index.get("name").textValue());
+        }
+        return indexSet;
     }
 
     private CouchClient getClient() throws IOException {
@@ -72,7 +103,7 @@ public class Store {
     }
 
     private CouchClient getClient(URI uri) throws IOException {
-        final URI baseURI = uri.trimQuery().trimFragment().trimSegments(uri.segmentCount());
+        final URI baseURI = uri.trimFragment().trimQuery().trimSegments(uri.segmentCount());
         final URL url = new URL(baseURI.toString());
         return new CouchClient(url, getMapper(), username, password);
     }
@@ -96,7 +127,7 @@ public class Store {
     public List<EPackage> getEPackages() {
         List<EPackage> result = new ArrayList<>();
         if (packageRegistryList != null) {
-            for (IPackageRegistry registry: packageRegistryList) {
+            for (IPackageRegistry registry : packageRegistryList) {
                 List<EPackage> list = registry.getEPackages();
                 if (list != null) {
                     result.addAll(list);
@@ -110,7 +141,7 @@ public class Store {
         ResourceSet resourceSet = new ResourceSetImpl();
         resourceSet.getPackageRegistry()
                 .put(EcorePackage.eNS_URI, EcorePackage.eINSTANCE);
-        for (EPackage ePackage: getEPackages()) {
+        for (EPackage ePackage : getEPackages()) {
             resourceSet.getPackageRegistry()
                     .put(ePackage.getNsURI(), ePackage);
         }
@@ -172,8 +203,7 @@ public class Store {
         URI uri = baseURI;
         if (id == null) {
             uri = uri.appendSegment("");
-        }
-        else {
+        } else {
             uri = uri.appendSegment(id);
         }
         if (rev != null) {
