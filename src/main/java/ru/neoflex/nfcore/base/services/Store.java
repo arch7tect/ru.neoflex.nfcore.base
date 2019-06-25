@@ -90,7 +90,7 @@ public class Store {
 
     private Set<String> getIndexes(CouchClient client) throws IOException {
         Set<String> indexSet = new HashSet<>();
-        JsonNode content = client.content(defaultDbname + "/_index");
+        JsonNode content = client.content("_index");
         ArrayNode indexes = (ArrayNode) content.get("indexes");
         for (JsonNode index : indexes) {
             indexSet.add(index.get("name").textValue());
@@ -109,7 +109,7 @@ public class Store {
     private CouchClient getClient(URI uri, String database) throws IOException {
         URI baseURI = uri.trimFragment().trimQuery().trimSegments(uri.segmentCount());
         if (database != null) {
-            baseURI = baseURI.appendSegment(database);
+            baseURI = baseURI.appendSegment(database).appendSegment("");
         }
         final URL url = new URL(baseURI.toString());
         return new CouchClient(url, getMapper(), username, password);
