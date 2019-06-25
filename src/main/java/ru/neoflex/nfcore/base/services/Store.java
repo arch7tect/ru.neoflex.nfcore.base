@@ -74,10 +74,25 @@ public class Store {
         CouchClient client = getDefaultClient();
         Set<String> indexSet = getIndexes(client);
         ObjectMapper mapper = getMapper();
+        final String idx_eClass = "idx_eClass";
+        if (!indexSet.contains(idx_eClass)) {
+            JsonNode indexNode = mapper.createObjectNode()
+                    .put("ddoc", idx_eClass)
+                    .put("name", idx_eClass)
+                    .put("type", "json")
+                    .set("index", mapper.createObjectNode()
+                            .set("fields", mapper.createArrayNode()
+                                    .add("contents.eClass")
+                            )
+                    );
+            client.post("_index", mapper.writeValueAsString(indexNode));
+        }
         final String idx_eClass_name = "idx_eClass_name";
         if (!indexSet.contains(idx_eClass_name)) {
             JsonNode indexNode = mapper.createObjectNode()
+                    .put("ddoc", idx_eClass_name)
                     .put("name", idx_eClass_name)
+                    .put("type", "json")
                     .set("index", mapper.createObjectNode()
                             .set("fields", mapper.createArrayNode()
                                     .add("contents.eClass")
