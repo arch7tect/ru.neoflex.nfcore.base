@@ -71,7 +71,7 @@ public class Store {
     }
 
     private void initDB() throws IOException {
-        CouchClient client = getClient();
+        CouchClient client = getDefaultClient();
         Set<String> indexSet = getIndexes(client);
         ObjectMapper mapper = getMapper();
         final String idx_eClass_name = "idx_eClass_name";
@@ -84,7 +84,7 @@ public class Store {
                                     .add("contents.name")
                             )
                     );
-            client.post(defaultDbname + "/_index", mapper.writeValueAsString(indexNode));
+            client.post("_index", mapper.writeValueAsString(indexNode));
         }
     }
 
@@ -99,11 +99,18 @@ public class Store {
     }
 
     private CouchClient getClient() throws IOException {
-        return getClient(couchURI);
+        return getClient(couchURI, null);
     }
 
-    private CouchClient getClient(URI uri) throws IOException {
-        final URI baseURI = uri.trimFragment().trimQuery().trimSegments(uri.segmentCount());
+    public CouchClient getDefaultClient() throws IOException {
+        return getClient(couchURI, defaultDbname);
+    }
+
+    private CouchClient getClient(URI uri, String database) throws IOException {
+        URI baseURI = uri.trimFragment().trimQuery().trimSegments(uri.segmentCount());
+        if (database != null) {
+            baseURI = baseURI.appendSegment(database);
+        }
         final URL url = new URL(baseURI.toString());
         return new CouchClient(url, getMapper(), username, password);
     }
@@ -192,14 +199,17 @@ public class Store {
     }
 
     public Resource createResource() {
-        return createResource(null, null);
+        return createResource(null, null, null);
     }
 
     public Resource createResource(String id) {
-        return createResource(id, null);
+        return createResource(id, null, null);
     }
 
-    public Resource createResource(String id, String rev) {
+    public Resource createResource(String id, String rev, ResourceSet resourceSet) {
+        if (resourceSet == null) {
+            resourceSet = getResourceSet();
+        }
         URI uri = baseURI;
         if (id == null) {
             uri = uri.appendSegment("");
@@ -209,7 +219,7 @@ public class Store {
         if (rev != null) {
             uri = uri.appendQuery("rev=" + rev);
         }
-        return getResourceSet().createResource(uri);
+        return resourceSet.createResource(uri);
     }
 
     public Resource createResource(URI uri) {
@@ -226,7 +236,7 @@ public class Store {
     }
 
     public Resource save(EObject object, String id, String rev) {
-        Resource resource = createResource(id, rev);
+        Resource resource = createResource(id, rev, null);
         resource.getContents().add(object);
         try {
             resource.save(null);
@@ -241,7 +251,7 @@ public class Store {
     }
 
     public Resource loadResource(String id) {
-        Resource resource = createResource(id, null);
+        Resource resource = createResource(id, null, null);
         try {
             resource.load(null);
             return resource;
@@ -268,7 +278,7 @@ public class Store {
     }
 
     public void delete(String id, String rev) {
-        Resource resource = createResource(id, rev);
+        Resource resource = createResource(id, rev, null);
         try {
             if (rev == null) {
                 resource.load(null);
