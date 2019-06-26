@@ -19,6 +19,7 @@ import org.emfjson.jackson.annotations.EcoreReferenceInfo;
 import org.emfjson.jackson.annotations.EcoreTypeInfo;
 import org.emfjson.jackson.databind.EMFContext;
 import org.emfjson.jackson.module.EMFModule;
+import org.emfjson.jackson.resource.JsonResource;
 import org.emfjson.jackson.resource.JsonResourceFactory;
 import org.emfjson.jackson.utils.ValueWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,21 +193,28 @@ public class Store {
                         if (eObjectURI == null) {
                             return null;
                         }
-                        String id = "";
-                        if (eObjectURI.segmentCount() > 0) {
-                            id = eObjectURI.segment(0);
+                        return eObjectURI.fragment();
+                        /*Object id = null;
+                        Resource resource = EMFContext.getResource(context, eObject);
+                        if (resource instanceof JsonResource) {
+                            id = ((JsonResource) resource).getID(eObject);
                         }
-                        if (eObjectURI.hasQuery()) {
-                            id = id + "?" + eObjectURI.query();
-                        }
-                        String fragment = eObjectURI.fragment();
-                        if (fragment != null) {
-                            while (fragment.startsWith("#")) {
-                                fragment = fragment.substring(1);
+                        URI eObjectURI = EMFContext.getURI(context, eObject);
+                        if (eObjectURI != null) {
+                            String fragment = eObjectURI.fragment();
+                            if (fragment != null) {
+                                while (fragment.startsWith("#")) {
+                                    fragment = fragment.substring(1);
+                                }
+                                if (id == null) {
+                                    id = fragment;
+                                }
+                                else {
+                                    id = id + "#" + fragment;
+                                }
                             }
                         }
-                        id = id + "#" + fragment;
-                        return fragment;
+                        return id;*/
                     }
                 }));
         emfModule.setReferenceInfo(new EcoreReferenceInfo("$ref"));
@@ -277,6 +285,7 @@ public class Store {
 
     public EObject loadEObjectByRef(String ref) {
         URI uri = getUriByRef(ref);
+        String id = uri.segmentCount() > 0 ? uri.segment(0) : null;
         Resource resource = createResource(uri);
         try {
             resource.load(null);
@@ -285,7 +294,6 @@ public class Store {
                 fragment = "/";
             }
             EObject eObject = resource.getEObject(fragment);
-            //EcoreUtil.resolveAll(eObject);
             return eObject;
         } catch (IOException e) {
             throw new RuntimeException(e);
