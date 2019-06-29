@@ -9,6 +9,7 @@ package ru.neoflex.nfcore.base.auth
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EClass
+import ru.neoflex.nfcore.base.types.Timestamp
 
 class Role {
     String name
@@ -84,6 +85,7 @@ class PasswordAuthenticator extends Authenticator {
 
 class User extends Authority {
     String email
+    Timestamp lastLogin
     contains Authenticator[] authenticators opposite user
     refers Group[] groups opposite users
 }
