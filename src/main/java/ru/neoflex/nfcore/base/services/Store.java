@@ -217,7 +217,7 @@ public class Store {
                         return id;*/
                     }
                 }));
-        emfModule.setReferenceInfo(new EcoreReferenceInfo("$ref"));
+        //emfModule.setReferenceInfo(new EcoreReferenceInfo("$ref"));
         return emfModule;
     }
 

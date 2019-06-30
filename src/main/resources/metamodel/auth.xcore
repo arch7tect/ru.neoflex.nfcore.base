@@ -76,7 +76,7 @@ abstract class Authority {
 
 abstract class Authenticator {
     refers User user opposite authenticators
-    Boolean disabled
+    EBoolean disabled
 }
 
 class PasswordAuthenticator extends Authenticator {
