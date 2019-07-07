@@ -137,17 +137,4 @@ public class DocFinder {
         }
         return resourceSet;
     }
-
-    public Resource loadResource(ResourceSet resourceSet, URI uri, JsonNode contents) throws JsonProcessingException {
-        Resource resource = resourceSet.createResource(uri);
-        ContextAttributes attributes = ContextAttributes
-                .getEmpty()
-                .withSharedAttribute("resourceSet", resourceSet)
-                .withSharedAttribute("resource", resource);
-        store.getMapper().reader()
-                .with(attributes)
-                .withValueToUpdate(resource)
-                .treeToValue(contents, Resource.class);
-        return resource;
-    }
 }
