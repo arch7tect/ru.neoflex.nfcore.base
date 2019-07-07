@@ -1,8 +1,10 @@
 package ru.neoflex.nfcore.base.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.cfg.ContextAttributes;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -221,94 +223,83 @@ public class Store {
         return emfModule;
     }
 
-    public Resource createResource() {
-        return createResource(null, null, null);
-    }
-
-    public Resource createResource(String id) {
-        return createResource(id, null, null);
-    }
-
-    public Resource createResource(String id, String rev, ResourceSet resourceSet) {
-        if (resourceSet == null) {
-            resourceSet = getResourceSet();
-        }
-        URI uri = baseURI;
-        if (id == null) {
-            uri = uri.appendSegment("");
-        } else {
-            uri = uri.appendSegment(id);
-        }
-        if (rev != null) {
-            uri = uri.appendQuery("rev=" + rev);
-        }
-        return resourceSet.createResource(uri);
-    }
-
-    public Resource createResource(URI uri) {
-        uri = uri.trimFragment().trimQuery();
-        return getResourceSet().createResource(uri);
-    }
-
     public URI getUriByRef(String ref) {
-        return URI.createURI(baseURI.toString() + ref);
+        return ref == null ? baseURI.appendSegment("") : URI.createURI(baseURI.toString() + ref);
     }
 
-    public Resource save(EObject object) {
-        return save(object, null, null);
-    }
-
-    public Resource save(EObject object, String id, String rev) {
-        Resource resource = createResource(id, rev, null);
-        resource.getContents().add(object);
-        try {
-            resource.save(null);
-            return resource;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public String getRefByUri(URI uri) {
+        String ref = uri.segment(0);
+        String query = uri.query();
+        if (query != null) {
+            ref = ref + "?" + query;
         }
-    }
-
-    public Resource create(EObject object) {
-        return save(object, null, null);
-    }
-
-    public Resource loadResource(String id) {
-        Resource resource = createResource(id, null, null);
-        try {
-            resource.load(null);
-            return resource;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        String fragment = uri.fragment();
+        if (fragment != null) {
+            ref = ref + "#" + fragment;
         }
+        return ref;
     }
 
-    public EObject loadEObjectByRef(String ref) {
+    public URI getUriByIdAndRev(String id, String rev) {
+        return baseURI.appendSegment(id).appendQuery("rev=" + rev);
+    }
+
+    private Resource saveEObject(URI uri, EObject eObject) throws IOException {
+        Resource resource = getResourceSet().createResource(uri);
+        resource.getContents().add(eObject);
+        resource.save(null);
+        return resource;
+    }
+
+    public Resource createEObject(EObject eObject) throws IOException {
+        URI uri = baseURI.appendSegment("");
+        return saveEObject(uri, eObject);
+    }
+
+    public Resource updateEObject(String ref, EObject eObject) throws IOException {
         URI uri = getUriByRef(ref);
-        String id = uri.segmentCount() > 0 ? uri.segment(0) : null;
-        Resource resource = createResource(uri);
-        try {
-            resource.load(null);
-            String fragment = uri.fragment();
-            if (fragment == null) {
-                fragment = "/";
-            }
-            EObject eObject = resource.getEObject(fragment);
-            return eObject;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return saveEObject(uri, eObject);
     }
 
-    public void delete(String id, String rev) {
-        Resource resource = createResource(id, rev, null);
-        try {
-            if (rev == null) {
-                resource.load(null);
-            }
-            resource.delete(null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public Resource treeToResource(URI uri, JsonNode contents) throws JsonProcessingException {
+        return treeToResource(getResourceSet(), uri, contents);
+    }
+
+    public Resource treeToResource(ResourceSet resourceSet, URI uri, JsonNode contents) throws JsonProcessingException {
+        Resource resource = resourceSet.createResource(uri);
+        ContextAttributes attributes = ContextAttributes
+                .getEmpty()
+                .withSharedAttribute("resourceSet", resourceSet)
+                .withSharedAttribute("resource", resource);
+        getMapper().reader()
+                .with(attributes)
+                .withValueToUpdate(resource)
+                .treeToValue(contents, Resource.class);
+        return resource;
+    }
+
+    public Resource loadResource(String ref) throws IOException {
+        URI uri = getUriByRef(ref);
+        Resource resource = loadResource(uri);
+        String fragment = uri.fragment();
+        if (fragment == null) {
+            return resource;
         }
+        EObject eObject = resource.getEObject(fragment);
+        Resource result = getResourceSet().createResource(resource.getURI().appendFragment(fragment));
+        result.getContents().add(eObject);
+        return result;
+    }
+
+    public Resource loadResource(URI uri) throws IOException {
+        Resource resource = getResourceSet().createResource(uri.trimFragment().trimQuery());
+        resource.load(null);
+        return resource;
+    }
+
+    public void deleteResource(String ref) throws IOException {
+        URI uri = getUriByRef(ref);
+        Resource resource = getResourceSet().createResource(uri);
+        resource.delete(null);
     }
 }

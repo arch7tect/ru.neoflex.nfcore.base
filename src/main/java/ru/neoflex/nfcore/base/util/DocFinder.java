@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.ContextAttributes;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -30,7 +31,7 @@ public class DocFinder {
     ObjectNode rootNode;
     ArrayNode fields;
     ArrayNode sort;
-    private JsonNode result;
+    private ObjectNode result;
 
     private DocFinder(Store store) {
         this.store = store;
@@ -113,31 +114,40 @@ public class DocFinder {
     }
 
     public DocFinder execute() throws IOException {
-        result = store.getDefaultClient().post("_find", mapper.writeValueAsString(rootNode));
+        result = (ObjectNode) store.getDefaultClient().post("_find", mapper.writeValueAsString(rootNode));
         return this;
     }
 
-    public List<Resource> getResources() throws IOException {
-        List<Resource> resources = new ArrayList<>();
+    public ObjectNode getExecutionStats() {
+        return result.with("execution_stats");
+    }
+
+    public ResourceSet getResourceSet() throws IOException {
+        ResourceSet resourceSet = store.getResourceSet();
         if (result != null) {
             for (JsonNode jsonNode: result.withArray("docs")) {
                 String id = jsonNode.get("_id").textValue();
                 String rev = jsonNode.get("_rev").textValue();
                 JsonNode contents = jsonNode.get("contents");
                 if (!contents.isNull()) {
-                    Resource resource = store.createResource(id, rev, null);
-                    ContextAttributes attributes = ContextAttributes
-                            .getEmpty()
-                            .withSharedAttribute("resourceSet", resource.getResourceSet())
-                            .withSharedAttribute("resource", resource);
-                    store.getMapper().reader()
-                            .with(attributes)
-                            .withValueToUpdate(resource)
-                            .treeToValue(contents, Resource.class);
-                    resources.add(resource);
+                    URI uri = store.getUriByIdAndRev(id, rev);
+                    store.treeToResource(resourceSet, uri, contents);
                 }
             }
         }
-        return resources;
+        return resourceSet;
+    }
+
+    public Resource loadResource(ResourceSet resourceSet, URI uri, JsonNode contents) throws JsonProcessingException {
+        Resource resource = resourceSet.createResource(uri);
+        ContextAttributes attributes = ContextAttributes
+                .getEmpty()
+                .withSharedAttribute("resourceSet", resourceSet)
+                .withSharedAttribute("resource", resource);
+        store.getMapper().reader()
+                .with(attributes)
+                .withValueToUpdate(resource)
+                .treeToValue(contents, Resource.class);
+        return resource;
     }
 }
