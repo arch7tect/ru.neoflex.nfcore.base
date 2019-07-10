@@ -57,7 +57,7 @@ public class EMFController {
         store.deleteResource(ref);
         return mapper.createObjectNode().put("result", "ok");
     }
-
+    
     @PutMapping("/resource")
     JsonNode putObject(@RequestParam(required = false) String ref, @RequestBody JsonNode contents) throws IOException {
         URI uri = store.getUriByRef(ref);
