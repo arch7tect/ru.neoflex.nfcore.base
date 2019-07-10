@@ -39,6 +39,7 @@ public class EMFController {
     private ObjectNode resourceSetToTree(ResourceSet resourceSet) {
         ObjectNode result = mapper.createObjectNode();
         List<Resource> resources = new ArrayList<>(resourceSet.getResources());
+        result.withArray("resources");
         for (Resource resource: resources) {
             result.withArray("resources").add(resourceToTree(resource));
         }
@@ -57,7 +58,7 @@ public class EMFController {
         store.deleteResource(ref);
         return mapper.createObjectNode().put("result", "ok");
     }
-    
+
     @PutMapping("/resource")
     JsonNode putObject(@RequestParam(required = false) String ref, @RequestBody JsonNode contents) throws IOException {
         URI uri = store.getUriByRef(ref);
