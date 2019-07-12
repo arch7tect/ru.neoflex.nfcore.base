@@ -39,6 +39,7 @@ public class EMFController {
     private ObjectNode resourceSetToTree(ResourceSet resourceSet) {
         ObjectNode result = mapper.createObjectNode();
         List<Resource> resources = new ArrayList<>(resourceSet.getResources());
+        result.withArray("resources");
         for (Resource resource: resources) {
             result.withArray("resources").add(resourceToTree(resource));
         }
