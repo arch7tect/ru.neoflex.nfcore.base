@@ -84,6 +84,8 @@ public class EMFController {
                 .execute();
         ObjectNode resourceSetNode = resourceSetToTree(docFinder.getResourceSet());
         resourceSetNode.set("executionStats", docFinder.getExecutionStats());
+        resourceSetNode.put("warning", docFinder.getWarning());
+        resourceSetNode.put("bookmark", docFinder.getBookmark());
         return resourceSetNode;
     }
 }

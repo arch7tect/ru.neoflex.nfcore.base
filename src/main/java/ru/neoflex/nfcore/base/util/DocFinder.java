@@ -122,6 +122,14 @@ public class DocFinder {
         return result.with("execution_stats");
     }
 
+    public String getBookmark() {
+        return result.get("bookmark") != null ? result.get("bookmark").asText() : null;
+    }
+
+    public String getWarning() {
+        return result.get("warning") != null ? result.get("warning").asText() : null;
+    }
+
     public ResourceSet getResourceSet() throws IOException {
         ResourceSet resourceSet = store.getResourceSet();
         if (result != null) {
