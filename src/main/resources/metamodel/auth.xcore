@@ -88,9 +88,8 @@ class User extends Authority {
     String email
     Timestamp lastLogin
     contains Authenticator[] authenticators opposite user
-    refers Group[] groups opposite users
+    refers Group[] groups
 }
 
 class Group extends Authority {
-    refers User[] users opposite groups
 }
