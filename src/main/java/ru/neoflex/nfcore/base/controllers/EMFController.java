@@ -15,6 +15,7 @@ import ru.neoflex.nfcore.base.services.Context;
 import ru.neoflex.nfcore.base.services.Store;
 import ru.neoflex.nfcore.base.util.DocFinder;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +27,12 @@ public class EMFController {
     Store store;
     @Autowired
     Context context;
-    @Autowired
     ObjectMapper mapper;
+
+    @PostConstruct
+    void init() {
+        mapper = store.getMapper();
+    }
 
     private ObjectNode resourceToTree(Resource resource) {
         ObjectNode result = mapper.createObjectNode();
