@@ -3,6 +3,8 @@ package ru.neoflex.nfcore.base.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.emfjson.jackson.module.EMFModule;
@@ -17,11 +19,11 @@ import java.io.IOException;
 @Service
 public class Workspace {
     private final static Log logger = LogFactory.getLog(Workspace.class);
-    @Value("${workspace.root:${user.dir}/workspace")
+    @Value("${workspace.root:${user.dir}/workspace}")
     String root;
 
     @PostConstruct
-    void init() throws IOException {
+    void init() throws GitAPIException {
         File rootDir = getRootDir();
         rootDir.mkdirs();
         try {
@@ -29,7 +31,11 @@ public class Workspace {
             repo.close();
         }
         catch (Exception ex) {
-
+            Git git = Git.init().setDirectory(rootDir).call();
+            try {
+            } finally {
+                git.close();
+            }
         }
     }
 

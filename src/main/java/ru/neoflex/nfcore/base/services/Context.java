@@ -3,7 +3,6 @@ package ru.neoflex.nfcore.base.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.emfjson.jackson.module.EMFModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +16,8 @@ public class Context {
     private Store store;
     @Autowired
     private Groovy groovy;
+    @Autowired
+    private Workspace workspace;
 
     private static final ThreadLocal<Context> tlContext = new ThreadLocal<Context>();
 
@@ -36,10 +37,7 @@ public class Context {
         return groovy;
     }
 
-    public ObjectMapper getMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(store.getModule());
-        return mapper;
+    public Workspace getWorkspace() {
+        return workspace;
     }
-
 }

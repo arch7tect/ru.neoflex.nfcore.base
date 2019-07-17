@@ -3,7 +3,6 @@ package ru.neoflex.nfcore.base.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.cfg.ContextAttributes;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.eclipse.emf.common.util.URI;
@@ -16,17 +15,12 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.emfjson.couchdb.CouchHandler;
 import org.emfjson.couchdb.client.CouchClient;
 import org.emfjson.couchdb.client.DB;
-import org.emfjson.jackson.annotations.EcoreIdentityInfo;
-import org.emfjson.jackson.annotations.EcoreTypeInfo;
-import org.emfjson.jackson.databind.EMFContext;
-import org.emfjson.jackson.module.EMFModule;
 import org.emfjson.jackson.resource.JsonResourceFactory;
-import org.emfjson.jackson.utils.ValueWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import ru.neoflex.nfcore.base.components.IPackageRegistry;
+import ru.neoflex.nfcore.base.util.EMFMapper;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -72,7 +66,7 @@ public class Store {
     private void initDB() throws IOException {
         CouchClient client = getDefaultClient();
         Set<String> indexSet = getIndexes(client);
-        ObjectMapper mapper = getMapper();
+        ObjectMapper mapper = EMFMapper.getMapper();
         final String idx_eClass = "idx_eClass";
         if (!indexSet.contains(idx_eClass)) {
             JsonNode indexNode = mapper.createObjectNode()
@@ -126,7 +120,7 @@ public class Store {
             baseURI = baseURI.appendSegment(database).appendSegment("");
         }
         final URL url = new URL(baseURI.toString());
-        return new CouchClient(url, getMapper(), username, password);
+        return new CouchClient(url, EMFMapper.getMapper(), username, password);
     }
 
     public static void checkStatus(JsonNode status) throws IOException {
@@ -137,12 +131,6 @@ public class Store {
             String message = status.get("error").asText() + ": " + status.get("reason").asText();
             throw new IOException(message);
         }
-    }
-
-    public ObjectMapper getMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(getModule());
-        return mapper;
     }
 
     public List<EPackage> getEPackages() {
@@ -171,51 +159,11 @@ public class Store {
                 .put("*", new JsonResourceFactory());
         resourceSet.getURIConverter()
                 .getURIHandlers()
-                .add(0, new CouchHandler(getMapper(), username, password));
+                .add(0, new CouchHandler(EMFMapper.getMapper(), username, password));
         resourceSet.getURIConverter().getURIMap().put(
                 baseURI,
                 couchURI);
         return resourceSet;
-    }
-
-    EMFModule getModule() {
-        EMFModule emfModule = new EMFModule();
-        emfModule.configure(EMFModule.Feature.OPTION_USE_ID, true);
-        emfModule.setTypeInfo(new EcoreTypeInfo("eClass"));
-        emfModule.setIdentityInfo(new EcoreIdentityInfo("_id",
-                new ValueWriter<EObject, Object>() {
-                    @Override
-                    public Object writeValue(EObject eObject, SerializerProvider context) {
-                        URI eObjectURI = EMFContext.getURI(context, eObject);
-                        if (eObjectURI == null) {
-                            return null;
-                        }
-                        return eObjectURI.fragment();
-                        /*Object id = null;
-                        Resource resource = EMFContext.getResource(context, eObject);
-                        if (resource instanceof JsonResource) {
-                            id = ((JsonResource) resource).getID(eObject);
-                        }
-                        URI eObjectURI = EMFContext.getURI(context, eObject);
-                        if (eObjectURI != null) {
-                            String fragment = eObjectURI.fragment();
-                            if (fragment != null) {
-                                while (fragment.startsWith("#")) {
-                                    fragment = fragment.substring(1);
-                                }
-                                if (id == null) {
-                                    id = fragment;
-                                }
-                                else {
-                                    id = id + "#" + fragment;
-                                }
-                            }
-                        }
-                        return id;*/
-                    }
-                }));
-        //emfModule.setReferenceInfo(new EcoreReferenceInfo("$ref"));
-        return emfModule;
     }
 
     public URI getUriByRef(String ref) {
@@ -266,7 +214,7 @@ public class Store {
                 .getEmpty()
                 .withSharedAttribute("resourceSet", resourceSet)
                 .withSharedAttribute("resource", resource);
-        getMapper().reader()
+        EMFMapper.getMapper().reader()
                 .with(attributes)
                 .withValueToUpdate(resource)
                 .treeToValue(contents, Resource.class);
