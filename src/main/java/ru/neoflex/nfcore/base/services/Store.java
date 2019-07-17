@@ -17,11 +17,9 @@ import org.emfjson.couchdb.CouchHandler;
 import org.emfjson.couchdb.client.CouchClient;
 import org.emfjson.couchdb.client.DB;
 import org.emfjson.jackson.annotations.EcoreIdentityInfo;
-import org.emfjson.jackson.annotations.EcoreReferenceInfo;
 import org.emfjson.jackson.annotations.EcoreTypeInfo;
 import org.emfjson.jackson.databind.EMFContext;
 import org.emfjson.jackson.module.EMFModule;
-import org.emfjson.jackson.resource.JsonResource;
 import org.emfjson.jackson.resource.JsonResourceFactory;
 import org.emfjson.jackson.utils.ValueWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +48,6 @@ public class Store {
     String password;
     @Value("${couchdb.dbname:nfmodelrepo}")
     String defaultDbname;
-    @Autowired
-    EMFModule module;
     @Autowired
     List<IPackageRegistry> packageRegistryList;
     DB db;
@@ -145,7 +141,7 @@ public class Store {
 
     public ObjectMapper getMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(module);
+        mapper.registerModule(getModule());
         return mapper;
     }
 
@@ -182,7 +178,6 @@ public class Store {
         return resourceSet;
     }
 
-    @Bean
     EMFModule getModule() {
         EMFModule emfModule = new EMFModule();
         emfModule.configure(EMFModule.Feature.OPTION_USE_ID, true);

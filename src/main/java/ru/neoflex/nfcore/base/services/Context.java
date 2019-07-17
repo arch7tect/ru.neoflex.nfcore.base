@@ -17,9 +17,6 @@ public class Context {
     private Store store;
     @Autowired
     private Groovy groovy;
-    @Autowired
-    private
-    EMFModule emfModule;
 
     private static final ThreadLocal<Context> tlContext = new ThreadLocal<Context>();
 
@@ -39,13 +36,9 @@ public class Context {
         return groovy;
     }
 
-    public EMFModule getEmfModule() {
-        return emfModule;
-    }
-
     public ObjectMapper getMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(emfModule);
+        mapper.registerModule(store.getModule());
         return mapper;
     }
 
