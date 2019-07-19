@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.neoflex.nfcore.base.auth.*;
 import ru.neoflex.nfcore.base.services.Context;
 import ru.neoflex.nfcore.base.services.Groovy;
+import ru.neoflex.nfcore.base.util.EMFMapper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -66,7 +67,7 @@ public class GroovyTests {
     @Test
     public void invokeStatic() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         Role superAdmin = createSuperAdminRole();
-        ObjectMapper mapper = context.getMapper();
+        ObjectMapper mapper = EMFMapper.getMapper();
         ObjectNode args = mapper.createObjectNode();
         JsonNode superAdminNode = mapper.valueToTree(superAdmin);
         args.set("role", superAdminNode);

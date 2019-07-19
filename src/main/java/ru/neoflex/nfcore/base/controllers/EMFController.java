@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.neoflex.nfcore.base.services.Context;
 import ru.neoflex.nfcore.base.services.Store;
 import ru.neoflex.nfcore.base.util.DocFinder;
+import ru.neoflex.nfcore.base.util.EMFMapper;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class EMFController {
 
     @PostConstruct
     void init() {
-        mapper = store.getMapper();
+        mapper = EMFMapper.getMapper();
     }
 
     private ObjectNode resourceToTree(Resource resource) {

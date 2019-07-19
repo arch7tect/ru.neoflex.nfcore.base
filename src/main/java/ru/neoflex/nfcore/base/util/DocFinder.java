@@ -35,7 +35,7 @@ public class DocFinder {
 
     private DocFinder(Store store) {
         this.store = store;
-        this.mapper = store.getMapper();
+        this.mapper = EMFMapper.getMapper();
         this.rootNode = mapper.createObjectNode();
     }
 
