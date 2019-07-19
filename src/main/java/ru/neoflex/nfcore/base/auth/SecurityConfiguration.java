@@ -76,13 +76,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected static class LdapConfiguration extends
             GlobalAuthenticationConfigurerAdapter {
 
-        @Value("${ldap.host:null}")
+        @Value("${ldap.host:}")
         private String host;
-        @Value("${ldap.domain:null}")
+        @Value("${ldap.domain:}")
         private String domain;
-        @Value("${ldap.port:null}")
+        @Value("${ldap.port:}")
         private String port;
-        @Value("${ldap.base:null}")
+        @Value("${ldap.base:}")
         private String base;
 
         @Override
