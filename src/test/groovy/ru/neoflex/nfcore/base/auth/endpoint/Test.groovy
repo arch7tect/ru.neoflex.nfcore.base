@@ -1,11 +1,10 @@
 package ru.neoflex.nfcore.base.auth.endpoint
 
-import com.fasterxml.jackson.databind.JsonNode
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import org.eclipse.emf.ecore.EObject
 import ru.neoflex.nfcore.base.auth.*
-import ru.neoflex.nfcore.base.services.Context
 import ru.neoflex.nfcore.base.util.EMFMapper
 
 class Test {

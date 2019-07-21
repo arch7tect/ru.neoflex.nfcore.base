@@ -1,9 +1,14 @@
 package ru.neoflex.nfcore.base.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.cfg.ContextAttributes;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.emfjson.jackson.annotations.EcoreIdentityInfo;
 import org.emfjson.jackson.annotations.EcoreTypeInfo;
 import org.emfjson.jackson.databind.EMFContext;
@@ -55,6 +60,19 @@ public class EMFMapper {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(getModule());
         return mapper;
+    }
+
+    public static Resource treeToResource(ResourceSet resourceSet, URI uri, JsonNode contents) throws JsonProcessingException {
+        Resource resource = resourceSet.createResource(uri);
+        ContextAttributes attributes = ContextAttributes
+                .getEmpty()
+                .withSharedAttribute("resourceSet", resourceSet)
+                .withSharedAttribute("resource", resource);
+        EMFMapper.getMapper().reader()
+                .with(attributes)
+                .withValueToUpdate(resource)
+                .treeToValue(contents, Resource.class);
+        return resource;
     }
 
 

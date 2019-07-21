@@ -1,4 +1,4 @@
-package ru.neoflex.nfcore.base.auth;
+package ru.neoflex.nfcore.base.configuration;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +24,14 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import ru.neoflex.nfcore.base.services.UserDetail;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class Security extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -64,7 +65,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             GlobalAuthenticationConfigurerAdapter {
 
         @Autowired
-        private UserDetailSvc userDetailService;
+        private UserDetail userDetailService;
 
         @Override
         public void init(AuthenticationManagerBuilder auth) throws Exception {

@@ -1,4 +1,4 @@
-package ru.neoflex.nfcore.base.auth;
+package ru.neoflex.nfcore.base.services;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-class UserDetailSvc implements UserDetailsService {
+public class UserDetail implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String arg0) throws UsernameNotFoundException {

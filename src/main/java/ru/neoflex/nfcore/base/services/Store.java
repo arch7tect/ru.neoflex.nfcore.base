@@ -3,7 +3,6 @@ package ru.neoflex.nfcore.base.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.cfg.ContextAttributes;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -18,8 +17,10 @@ import org.emfjson.couchdb.client.DB;
 import org.emfjson.jackson.resource.JsonResourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import ru.neoflex.nfcore.base.components.IPackageRegistry;
+import ru.neoflex.nfcore.base.components.Publisher;
 import ru.neoflex.nfcore.base.util.EMFMapper;
 
 import javax.annotation.PostConstruct;
@@ -44,6 +45,8 @@ public class Store {
     String defaultDbname;
     @Autowired
     List<IPackageRegistry> packageRegistryList;
+    @Autowired
+    Publisher publisher;
     DB db;
     URI couchURI;
     URI baseURI;
@@ -189,8 +192,21 @@ public class Store {
 
     private Resource saveEObject(URI uri, EObject eObject) throws IOException {
         Resource resource = getResourceSet().createResource(uri);
-        resource.getContents().add(eObject);
-        resource.save(null);
+        Publisher.BeforeSaveEvent beforeSaveEvent = new Publisher.BeforeSaveEvent(eObject);
+        publisher.publish(beforeSaveEvent);
+        if (beforeSaveEvent.getEObject() != null) {
+            resource.getContents().add(eObject);
+            resource.save(null);
+            if (!resource.getContents().isEmpty()) {
+                EObject savedObject = resource.getContents().get(0);
+                Publisher.AfterSaveEvent afterSaveEvent = new Publisher.AfterSaveEvent(savedObject);
+                publisher.publish(afterSaveEvent);
+                resource.getContents().clear();
+                if (afterSaveEvent.getEObject() != null) {
+                    resource.getContents().add(afterSaveEvent.getEObject());
+                }
+            }
+        }
         return resource;
     }
 
@@ -202,23 +218,6 @@ public class Store {
     public Resource updateEObject(String ref, EObject eObject) throws IOException {
         URI uri = getUriByRef(ref);
         return saveEObject(uri, eObject);
-    }
-
-    public Resource treeToResource(URI uri, JsonNode contents) throws JsonProcessingException {
-        return treeToResource(getResourceSet(), uri, contents);
-    }
-
-    public Resource treeToResource(ResourceSet resourceSet, URI uri, JsonNode contents) throws JsonProcessingException {
-        Resource resource = resourceSet.createResource(uri);
-        ContextAttributes attributes = ContextAttributes
-                .getEmpty()
-                .withSharedAttribute("resourceSet", resourceSet)
-                .withSharedAttribute("resource", resource);
-        EMFMapper.getMapper().reader()
-                .with(attributes)
-                .withValueToUpdate(resource)
-                .treeToValue(contents, Resource.class);
-        return resource;
     }
 
     public Resource loadResource(String ref) throws IOException {
@@ -237,12 +236,30 @@ public class Store {
     public Resource loadResource(URI uri) throws IOException {
         Resource resource = getResourceSet().createResource(uri.trimFragment().trimQuery());
         resource.load(null);
+        if (!resource.getContents().isEmpty()) {
+            EObject eObject = resource.getContents().get(0);
+            Publisher.AfterLoadEvent afterLoadEvent = new Publisher.AfterLoadEvent(eObject);
+            publisher.publish(afterLoadEvent);
+            resource.getContents().clear();
+            if (afterLoadEvent.getEObject() != null) {
+                resource.getContents().add(afterLoadEvent.getEObject());
+            }
+        }
         return resource;
     }
 
     public void deleteResource(String ref) throws IOException {
         URI uri = getUriByRef(ref);
+        deleteResource(uri);
+    }
+
+    public void deleteResource(URI uri) throws IOException {
         Resource resource = getResourceSet().createResource(uri);
         resource.delete(null);
     }
+
+    public Resource treeToResource(URI uri, JsonNode contents) throws JsonProcessingException {
+        return EMFMapper.treeToResource(getResourceSet(), uri, contents);
+    }
+
 }
