@@ -139,7 +139,7 @@ public class DocFinder {
                 JsonNode contents = jsonNode.get("contents");
                 if (!contents.isNull()) {
                     URI uri = store.getUriByIdAndRev(id, rev);
-                    store.treeToResource(resourceSet, uri, contents);
+                    EMFMapper.treeToResource(resourceSet, uri, contents);
                 }
             }
         }
