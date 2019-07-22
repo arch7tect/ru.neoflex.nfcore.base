@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.neoflex.nfcore.base.components.Publisher;
 
 @Service
 public class Context {
@@ -18,6 +19,8 @@ public class Context {
     private Groovy groovy;
     @Autowired
     private Workspace workspace;
+    @Autowired
+    private Publisher publisher;
 
     private static final ThreadLocal<Context> tlContext = new ThreadLocal<Context>();
 
@@ -39,5 +42,9 @@ public class Context {
 
     public Workspace getWorkspace() {
         return workspace;
+    }
+
+    public Publisher getPublisher() {
+        return publisher;
     }
 }

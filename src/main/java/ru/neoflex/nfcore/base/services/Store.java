@@ -199,9 +199,9 @@ public class Store {
             resource.save(null);
             if (!resource.getContents().isEmpty()) {
                 EObject savedObject = resource.getContents().get(0);
-                resource.getContents().clear();
                 Publisher.AfterSaveEvent afterSaveEvent = new Publisher.AfterSaveEvent(savedObject);
                 publisher.publish(afterSaveEvent);
+                resource.getContents().clear();
                 if (afterSaveEvent.getEObject() != null) {
                     resource.getContents().add(afterSaveEvent.getEObject());
                 }
@@ -238,9 +238,9 @@ public class Store {
         resource.load(null);
         if (!resource.getContents().isEmpty()) {
             EObject eObject = resource.getContents().get(0);
-            resource.getContents().clear();
             Publisher.AfterLoadEvent afterLoadEvent = new Publisher.AfterLoadEvent(eObject);
             publisher.publish(afterLoadEvent);
+            resource.getContents().clear();
             if (afterLoadEvent.getEObject() != null) {
                 resource.getContents().add(afterLoadEvent.getEObject());
             }
@@ -250,6 +250,10 @@ public class Store {
 
     public void deleteResource(String ref) throws IOException {
         URI uri = getUriByRef(ref);
+        deleteResource(uri);
+    }
+
+    public void deleteResource(URI uri) throws IOException {
         Resource resource = getResourceSet().createResource(uri);
         resource.delete(null);
     }

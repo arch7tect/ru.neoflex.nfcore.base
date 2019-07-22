@@ -48,7 +48,7 @@ public class Security extends WebSecurityConfigurerAdapter {
         config.addAllowedMethod("PATCH");
         source.registerCorsConfiguration("/**", config);
         http
-                     .httpBasic()
+                    .httpBasic()
                 .and()
                      .authorizeRequests()
                      .anyRequest().authenticated()
