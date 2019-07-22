@@ -254,8 +254,18 @@ public class Store {
     }
 
     public void deleteResource(URI uri) throws IOException {
-        Resource resource = getResourceSet().createResource(uri);
-        resource.delete(null);
+        ResourceSet resourceSet = getResourceSet();
+        Resource resource = resourceSet.createResource(uri);
+        resource.load(null);
+        if (resource.getContents().isEmpty()) {
+            throw new IOException("Resource " + uri.toString() + " not found");
+        }
+        EObject eObject = resource.getContents().get(0);
+        Publisher.BeforeDeleteEvent beforeDeleteEvent = new Publisher.BeforeDeleteEvent(eObject);
+        publisher.publish(beforeDeleteEvent);
+        resourceSet.createResource(uri).delete(null);
+        Publisher.AfterDeleteEvent afterDeleteEvent = new Publisher.AfterDeleteEvent(eObject);
+        publisher.publish(afterDeleteEvent);
     }
 
     public Resource treeToResource(URI uri, JsonNode contents) throws JsonProcessingException {

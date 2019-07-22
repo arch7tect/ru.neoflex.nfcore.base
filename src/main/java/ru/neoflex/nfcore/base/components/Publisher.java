@@ -55,6 +55,12 @@ public class Publisher {
         }
     }
 
+    public static class AfterDeleteEvent extends EObjectEvent {
+        public AfterDeleteEvent(EObject eObject) {
+            super(eObject);
+        }
+    }
+
     public abstract static class EObjectHandler<T extends EObject> implements ISubscriber {
         EClass eClass;
 
@@ -111,6 +117,17 @@ public class Publisher {
 
     public abstract static class BeforeDeleteHandler<T extends EObject> extends EObjectHandler<T> {
         public BeforeDeleteHandler(EClass eClass) {
+            super(eClass);
+        }
+
+        @Override
+        public boolean canHandle(IEvent event) {
+            return event instanceof BeforeDeleteEvent && super.canHandle(event);
+        }
+    }
+
+    public abstract static class AfterDeleteHandler<T extends EObject> extends EObjectHandler<T> {
+        public AfterDeleteHandler(EClass eClass) {
             super(eClass);
         }
 

@@ -23,7 +23,7 @@ public class PublisherTests {
     Context context;
 
     @Test
-    public void loadAndStore() throws ClassNotFoundException, IllegalAccessException, InstantiationException, IOException {
+    public void handleEvents() throws ClassNotFoundException, IllegalAccessException, InstantiationException, IOException {
         List<String> strings = new ArrayList<>();
         Publisher.BeforeSaveHandler<Role> beforeSaveHandler = new Publisher.BeforeSaveHandler<Role>(AuthPackage.Literals.ROLE) {
             @Override
@@ -49,14 +49,32 @@ public class PublisherTests {
             }
         };
         context.getPublisher().subscribe(afterLoadHandler);
+        Publisher.BeforeDeleteHandler<Role> beforeDeleteHandler = new Publisher.BeforeDeleteHandler<Role>(AuthPackage.Literals.ROLE) {
+            @Override
+            public EObject handleEObject(Role eObject) {
+                strings.add(eObject.getName());
+                return eObject;
+            }
+        };
+        context.getPublisher().subscribe(beforeDeleteHandler);
+        Publisher.AfterDeleteHandler<Role> afterDeleteHandler = new Publisher.AfterDeleteHandler<Role>(AuthPackage.Literals.ROLE) {
+            @Override
+            public EObject handleEObject(Role eObject) {
+                strings.add(eObject.getName());
+                return eObject;
+            }
+        };
+        context.getPublisher().subscribe(afterDeleteHandler);
         Role role = createMyRole();
         Resource roleResource = context.getStore().createEObject(role);
         Resource resource2 = context.getStore().loadResource(roleResource.getURI());
         context.getStore().deleteResource(roleResource.getURI());
-        Assert.assertEquals(3, strings.size());
+        Assert.assertEquals(5, strings.size());
         Assert.assertTrue(context.getPublisher().unsubscribe(beforeSaveHandler));
         Assert.assertTrue(context.getPublisher().unsubscribe(afterSaveHandler));
         Assert.assertTrue(context.getPublisher().unsubscribe(afterLoadHandler));
+        Assert.assertTrue(context.getPublisher().unsubscribe(beforeDeleteHandler));
+        Assert.assertTrue(context.getPublisher().unsubscribe(afterDeleteHandler));
     }
 
     public static Role createMyRole() {
