@@ -23,7 +23,7 @@ public class PublisherTests {
     Context context;
 
     @Test
-    public void handleEvents() throws ClassNotFoundException, IllegalAccessException, InstantiationException, IOException {
+    public void handleEvents() throws IOException {
         List<String> strings = new ArrayList<>();
         Publisher.BeforeSaveHandler<Role> beforeSaveHandler = new Publisher.BeforeSaveHandler<Role>(AuthPackage.Literals.ROLE) {
             @Override
