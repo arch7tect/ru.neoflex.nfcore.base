@@ -101,7 +101,7 @@ public class Security extends WebSecurityConfigurerAdapter {
                         UserDetails userDetails = ldapUserDetailsMapper.mapUserFromContext(ctx, username, authorities);
 
                         Collection<GrantedAuthority> au = new ArrayList<>();
-                        au.add(new SimpleGrantedAuthority("ADMIN"));
+                        au.add(new SimpleGrantedAuthority("DefaultNR"));
 
                         for (GrantedAuthority grantedAuthority : userDetails.getAuthorities()) {
                             au.add(new SimpleGrantedAuthority(grantedAuthority.getAuthority()));
