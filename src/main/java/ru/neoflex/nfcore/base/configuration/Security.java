@@ -1,6 +1,10 @@
 package ru.neoflex.nfcore.base.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.ldap.userdetails.LdapUserDetails;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsImpl;
@@ -24,10 +29,13 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import ru.neoflex.nfcore.base.services.Store;
 import ru.neoflex.nfcore.base.services.UserDetail;
+import ru.neoflex.nfcore.base.util.DocFinder;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
 
 @Configuration
 @EnableWebSecurity
@@ -77,6 +85,9 @@ public class Security extends WebSecurityConfigurerAdapter {
     protected static class LdapConfiguration extends
             GlobalAuthenticationConfigurerAdapter {
 
+        @Autowired
+        Store store;
+
         @Value("${ldap.host:}")
         private String host;
         @Value("${ldap.domain:}")
@@ -93,6 +104,9 @@ public class Security extends WebSecurityConfigurerAdapter {
                 final ActiveDirectoryLdapAuthenticationProvider provider =
                         new ActiveDirectoryLdapAuthenticationProvider(domain, url, base);
                 final LdapUserDetailsMapper ldapUserDetailsMapper = new LdapUserDetailsMapper();
+                final HashSet<GrantedAuthority> au = new HashSet<>();
+                final HashSet<String> rolesFromLdap = new HashSet<>();
+                final HashSet<String> rolesFromDB = new HashSet<>();
 
                 provider.setUserDetailsContextMapper(new UserDetailsContextMapper() {
 
@@ -100,11 +114,46 @@ public class Security extends WebSecurityConfigurerAdapter {
                     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {
                         UserDetails userDetails = ldapUserDetailsMapper.mapUserFromContext(ctx, username, authorities);
 
-                        Collection<GrantedAuthority> au = new ArrayList<>();
-                        au.add(new SimpleGrantedAuthority("DefaultNR"));
-
+                        //Get roles from Ldap
                         for (GrantedAuthority grantedAuthority : userDetails.getAuthorities()) {
-                            au.add(new SimpleGrantedAuthority(grantedAuthority.getAuthority()));
+                            String temp = grantedAuthority.toString();
+                            rolesFromLdap.add(temp);
+                        }
+
+                        //Get roles from Databases (from roles and from groups)
+                        DocFinder docFinder = DocFinder.create(store);
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        ObjectNode selector = objectMapper.createObjectNode();
+                        selector
+                                .with("contents")
+                                .put("eClass", "ru.neoflex.nfcore.base.auth#//Role");
+                        try {
+                            docFinder
+                                    .executionStats(true)
+                                    .selector(selector)
+                                    .execute();
+                            EList<Resource> resources = docFinder.getResourceSet().getResources();
+
+                            if (resources.isEmpty()) {
+                                return null;
+                            }
+                            for (Resource resource: resources) {
+                                ru.neoflex.nfcore.base.auth.Role role = (ru.neoflex.nfcore.base.auth.Role) resource.getContents().get(0);
+                                if (!role.getName().isEmpty()) {
+                                    rolesFromDB.add(role.getName());
+                                }
+                            }
+
+                            //Add roles from Ldap that are contained in Databases
+                            for (String roleFromLdap:rolesFromLdap) {
+                                for (String roleFromDB: rolesFromDB) {
+                                    if (roleFromLdap.equals(roleFromDB)) {
+                                        au.add(new SimpleGrantedAuthority(roleFromLdap));
+                                    }
+                                }
+                            }
+                        } catch (IOException e) {
+                            throw new UsernameNotFoundException(e.getMessage());
                         }
 
                         LdapUserDetailsImpl.Essence essence = new LdapUserDetailsImpl.Essence((LdapUserDetails) userDetails);
