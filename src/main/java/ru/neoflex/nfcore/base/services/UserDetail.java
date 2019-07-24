@@ -38,7 +38,7 @@ public class UserDetail implements UserDetailsService {
             return null;
         }
 
-        DocFinder docFinder = new DocFinder(store);
+        DocFinder docFinder = DocFinder.create(store);
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode selector = objectMapper.createObjectNode();
         selector

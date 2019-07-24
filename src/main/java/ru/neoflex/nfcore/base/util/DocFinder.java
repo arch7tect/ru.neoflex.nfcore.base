@@ -1,20 +1,14 @@
 package ru.neoflex.nfcore.base.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.cfg.ContextAttributes;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import ru.neoflex.nfcore.base.services.Store;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DocFinder {
     public JsonNode getResult() {

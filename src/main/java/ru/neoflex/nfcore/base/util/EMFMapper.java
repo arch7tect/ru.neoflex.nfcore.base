@@ -29,30 +29,8 @@ public class EMFMapper {
                             return null;
                         }
                         return eObjectURI.fragment();
-                        /*Object id = null;
-                        Resource resource = EMFContext.getResource(context, eObject);
-                        if (resource instanceof JsonResource) {
-                            id = ((JsonResource) resource).getID(eObject);
-                        }
-                        URI eObjectURI = EMFContext.getURI(context, eObject);
-                        if (eObjectURI != null) {
-                            String fragment = eObjectURI.fragment();
-                            if (fragment != null) {
-                                while (fragment.startsWith("#")) {
-                                    fragment = fragment.substring(1);
-                                }
-                                if (id == null) {
-                                    id = fragment;
-                                }
-                                else {
-                                    id = id + "#" + fragment;
-                                }
-                            }
-                        }
-                        return id;*/
                     }
                 }));
-        //emfModule.setReferenceInfo(new EcoreReferenceInfo("$ref"));
         return emfModule;
     }
 
