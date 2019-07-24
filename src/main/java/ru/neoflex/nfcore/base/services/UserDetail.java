@@ -15,12 +15,13 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.neoflex.nfcore.base.auth.Authenticator;
+import ru.neoflex.nfcore.base.auth.Group;
 import ru.neoflex.nfcore.base.auth.PasswordAuthenticator;
+import ru.neoflex.nfcore.base.auth.Role;
 import ru.neoflex.nfcore.base.util.DocFinder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 
 @Service
 public class UserDetail implements UserDetailsService {
@@ -32,7 +33,7 @@ public class UserDetail implements UserDetailsService {
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
         String password = null;
-        String role = null;
+        HashSet<GrantedAuthority> au = new HashSet<>();
 
         if(userName == null){
             return null;
@@ -67,16 +68,27 @@ public class UserDetail implements UserDetailsService {
                     break;
                 }
             }
+            //add user`s Roles
             if (!user.getRoles().isEmpty()) {
-                role = user.getRoles().get(0).getName();
+                EList<Role> userRoles = user.getRoles();
+                for (Role userRole: userRoles) {
+                    au.add(new SimpleGrantedAuthority(userRole.getName()));
+                }
             }
 
+            //add user`s Roles from Groups
+            if (!user.getGroups().isEmpty()) {
+                EList<Group> userGroups = user.getGroups();
+                for (Group userGroup: userGroups) {
+                    EList<Role> userRolesGroups = userGroup.getRoles();
+                    for (Role userRoleGroup: userRolesGroups) {
+                        au.add(new SimpleGrantedAuthority( userRoleGroup.getName() ));
+                    }
+                }
+            }
         } catch (IOException e) {
             throw new UsernameNotFoundException(e.getMessage());
         }
-
-        List<GrantedAuthority> au = new ArrayList<>();
-        au.add(new SimpleGrantedAuthority(role));
 
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
@@ -84,5 +96,4 @@ public class UserDetail implements UserDetailsService {
                 au);
         return userDetails;
     }
-
 }
