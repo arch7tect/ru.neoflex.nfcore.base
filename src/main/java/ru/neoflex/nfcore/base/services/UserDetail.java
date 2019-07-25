@@ -33,7 +33,7 @@ public class UserDetail implements UserDetailsService {
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
         String password = null;
-        HashSet<GrantedAuthority> au = new HashSet<>();
+        final HashSet<GrantedAuthority> au = new HashSet<>();
 
         if(userName == null){
             return null;
@@ -68,7 +68,7 @@ public class UserDetail implements UserDetailsService {
                     break;
                 }
             }
-            //add user`s Roles
+            //add user Roles from Roles
             if (!user.getRoles().isEmpty()) {
                 EList<Role> userRoles = user.getRoles();
                 for (Role userRole: userRoles) {
@@ -76,7 +76,7 @@ public class UserDetail implements UserDetailsService {
                 }
             }
 
-            //add user`s Roles from Groups
+            //add user Roles from Groups
             if (!user.getGroups().isEmpty()) {
                 EList<Group> userGroups = user.getGroups();
                 for (Group userGroup: userGroups) {

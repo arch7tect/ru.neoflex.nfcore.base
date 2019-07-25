@@ -134,9 +134,6 @@ public class Security extends WebSecurityConfigurerAdapter {
                                     .execute();
                             EList<Resource> resources = docFinder.getResourceSet().getResources();
 
-                            if (resources.isEmpty()) {
-                                return null;
-                            }
                             for (Resource resource: resources) {
                                 ru.neoflex.nfcore.base.auth.Role role = (ru.neoflex.nfcore.base.auth.Role) resource.getContents().get(0);
                                 if (!role.getName().isEmpty()) {
@@ -146,12 +143,11 @@ public class Security extends WebSecurityConfigurerAdapter {
 
                             //Add roles from Ldap that are contained in Databases
                             for (String roleFromLdap:rolesFromLdap) {
-                                for (String roleFromDB: rolesFromDB) {
-                                    if (roleFromLdap.equals(roleFromDB)) {
-                                        au.add(new SimpleGrantedAuthority(roleFromLdap));
-                                    }
+                                if (rolesFromDB.contains(roleFromLdap)) {
+                                    au.add(new SimpleGrantedAuthority(roleFromLdap));
                                 }
                             }
+
                         } catch (IOException e) {
                             throw new UsernameNotFoundException(e.getMessage());
                         }
