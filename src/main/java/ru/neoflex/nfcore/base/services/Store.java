@@ -201,9 +201,12 @@ public class Store {
                 EObject savedObject = resource.getContents().get(0);
                 Publisher.AfterSaveEvent afterSaveEvent = new Publisher.AfterSaveEvent(savedObject);
                 publisher.publish(afterSaveEvent);
-                resource.getContents().clear();
+                //resource.getContents().clear();
                 if (afterSaveEvent.getEObject() != null) {
                     resource.getContents().add(afterSaveEvent.getEObject());
+                    while (resource.getContents().size() > 1) {
+                        resource.getContents().remove(0);
+                    }
                 }
             }
         }
@@ -240,9 +243,12 @@ public class Store {
             EObject eObject = resource.getContents().get(0);
             Publisher.AfterLoadEvent afterLoadEvent = new Publisher.AfterLoadEvent(eObject);
             publisher.publish(afterLoadEvent);
-            resource.getContents().clear();
+            //resource.getContents().clear();
             if (afterLoadEvent.getEObject() != null) {
                 resource.getContents().add(afterLoadEvent.getEObject());
+                while (resource.getContents().size() > 1) {
+                    resource.getContents().remove(0);
+                }
             }
         }
         return resource;
