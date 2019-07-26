@@ -127,10 +127,10 @@ public class DocFinder {
     public ResourceSet getResourceSet() throws IOException {
         ResourceSet resourceSet = store.getResourceSet();
         if (result != null) {
-            for (JsonNode jsonNode: result.withArray("docs")) {
-                String id = jsonNode.get("_id").textValue();
-                String rev = jsonNode.get("_rev").textValue();
-                JsonNode contents = jsonNode.get("contents");
+            for (JsonNode doc: result.withArray("docs")) {
+                String id = doc.get("_id").textValue();
+                String rev = doc.get("_rev").textValue();
+                JsonNode contents = doc.get("contents");
                 if (!contents.isNull()) {
                     URI uri = store.getUriByIdAndRev(id, rev);
                     EMFMapper.treeToResource(resourceSet, uri, contents);

@@ -21,6 +21,8 @@ public class Context {
     private Workspace workspace;
     @Autowired
     private Publisher publisher;
+    @Autowired
+    private Epsilon epsilon;
 
     private static final ThreadLocal<Context> tlContext = new ThreadLocal<Context>();
 
@@ -46,5 +48,9 @@ public class Context {
 
     public Publisher getPublisher() {
         return publisher;
+    }
+
+    public Epsilon getEpsilon() {
+        return epsilon;
     }
 }
