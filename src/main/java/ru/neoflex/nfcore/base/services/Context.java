@@ -12,8 +12,6 @@ public class Context {
     private final static Log logger = LogFactory.getLog(Context.class);
 
     @Autowired
-    private Context current;
-    @Autowired
     private Store store;
     @Autowired
     private Groovy groovy;
@@ -31,7 +29,7 @@ public class Context {
     }
 
     public void setCurrent() {
-        tlContext.set(current);
+        tlContext.set(this);
     }
 
     public Store getStore() {
