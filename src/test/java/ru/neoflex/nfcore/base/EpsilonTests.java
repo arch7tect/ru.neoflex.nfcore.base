@@ -95,7 +95,10 @@ public class EpsilonTests {
                     "[%=toValidName('12,')%]";
             File newProgramFile = context.getWorkspace().getFile("epsilon/ToValid2.egl");
             FileCopyUtils.copy(new ByteArrayInputStream(program.getBytes()), Files.newOutputStream(newProgramFile.toPath()));
-            return context.getEpsilon().generate("epsilon/ToValid2.egl", null, resourceSet);
+            String result = context.getEpsilon().generate("epsilon/ToValid2.egl", null, resourceSet);
+            newProgramFile.delete();
+            newResourceFile.delete();
+            return result;
         });
         Assert.assertEquals("_12_", text);
     }
