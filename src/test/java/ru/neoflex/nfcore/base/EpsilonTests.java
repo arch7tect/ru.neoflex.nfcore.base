@@ -24,6 +24,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -78,10 +80,15 @@ public class EpsilonTests {
     @Test
     public void testImport() throws Exception {
         ResourceSet resourceSet = getUserFinder().execute().getResourceSet();
-        String template = "[%import \"Utils.egl\";%]" +
-                "[%=toValidName('12,')%]";
         String text = context.getEpsilon().generate("epsilon/ToValid.egl", null, resourceSet);
         Assert.assertEquals("_12_", text);
+    }
+
+    @Test
+    public void testJustString() throws Exception {
+        String template = "[%=x.toLowerCase()%]";
+        String text = context.getEpsilon().generateFromString(template, new HashMap<String, Object>(){{put("x", "Ok");}});
+        Assert.assertEquals("ok", text);
     }
 
     @Test

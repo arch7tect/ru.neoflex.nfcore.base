@@ -93,7 +93,7 @@ public class Epsilon {
 
     public String generateFromString(String templateString, Map<String, Object> params, URI uri, ResourceSet resourceSet) throws Exception {
         IModel model = createModel("S", uri, resourceSet);
-        return generate(templateString, params, new ArrayList<IModel>(){{add(model);}});
+        return generateFromString(templateString, params, new ArrayList<IModel>(){{add(model);}});
     }
 
     public String generate(String templatePath, Map<String, Object> params, URI uri, ResourceSet resourceSet) throws Exception {
@@ -103,7 +103,7 @@ public class Epsilon {
 
     public String generateFromString(String templateString, Map<String, Object> params, EObject eObject) throws Exception {
         IModel model = createModel("S", eObject);
-        return generate(templateString, params, new ArrayList<IModel>(){{add(model);}});
+        return generateFromString(templateString, params, new ArrayList<IModel>(){{add(model);}});
     }
 
     public String generate(String templatePath, Map<String, Object> params, EObject eObject) throws Exception {
@@ -127,6 +127,10 @@ public class Epsilon {
         checkTemplateErrors(template);
         String result = template.process();
         return result;
+    }
+
+    public String generateFromString(String templateString, Map<String, Object> params) throws Exception {
+        return generateFromString(templateString, params, new ArrayList<>());
     }
 
     public String generateFromString(String templateString, Map<String, Object> params, List<IModel> models) throws Exception {
