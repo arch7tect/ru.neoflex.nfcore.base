@@ -13,3 +13,6 @@ import java.util.Date
 type Timestamp wraps Timestamp
 type Date wraps Date
 type ByteArray wraps byte[]
+type Password wraps String
+type Text wraps String
+type URL wraps String

@@ -20,24 +20,26 @@ import org.eclipse.epsilon.eol.models.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import ru.neoflex.nfcore.base.components.IPackageRegistry;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.*;
 
 @Service
 public class Epsilon {
     private static final Logger logger = LoggerFactory.getLogger(Epsilon.class);
+    public static final String EPSILON_TEMPLATE_ROOT = "epsilon";
 
     @Autowired
     Context context;
-    File templateRootDir;
+
     @PostConstruct
     void init() {
-        templateRootDir = new File(context.getWorkspace().getRootDir(), "epsilon");
-        templateRootDir.mkdirs();
     }
 
     public EmfModel createModel(String name, URI uri) throws EolModelLoadingException {
@@ -82,53 +84,52 @@ public class Epsilon {
         };
         model.setName(name);
         model.setStoredOnDisposal(false);
-        if (resourceSet.getResources().isEmpty()) {
-            throw new IllegalArgumentException("Empty ResourceSet");
+        if (!resourceSet.getResources().isEmpty()) {
+            model.setResource(resourceSet.getResources().get(0));
+            EcoreUtil.resolveAll(resourceSet);
         }
-        model.setResource(resourceSet.getResources().get(0));
-        EcoreUtil.resolveAll(resourceSet);
         return model;
     }
 
-    public String generate(String templateString, Map<String, Object> params, URI uri, ResourceSet resourceSet) throws Exception {
+    public String generateFromString(String templateString, Map<String, Object> params, URI uri, ResourceSet resourceSet) throws Exception {
         IModel model = createModel("S", uri, resourceSet);
         return generate(templateString, params, new ArrayList<IModel>(){{add(model);}});
     }
 
-    public String generate(File templateFile, Map<String, Object> params, URI uri, ResourceSet resourceSet) throws Exception {
+    public String generate(String templatePath, Map<String, Object> params, URI uri, ResourceSet resourceSet) throws Exception {
         IModel model = createModel("S", uri, resourceSet);
-        return generate(templateFile, params, new ArrayList<IModel>(){{add(model);}});
+        return generate(templatePath, params, new ArrayList<IModel>(){{add(model);}});
     }
 
-    public String generate(String templateString, Map<String, Object> params, EObject eObject) throws Exception {
+    public String generateFromString(String templateString, Map<String, Object> params, EObject eObject) throws Exception {
         IModel model = createModel("S", eObject);
         return generate(templateString, params, new ArrayList<IModel>(){{add(model);}});
     }
 
-    public String generate(File templateFile, Map<String, Object> params, EObject eObject) throws Exception {
+    public String generate(String templatePath, Map<String, Object> params, EObject eObject) throws Exception {
         IModel model = createModel("S", eObject);
-        return generate(templateFile, params, new ArrayList<IModel>(){{add(model);}});
+        return generate(templatePath, params, new ArrayList<IModel>(){{add(model);}});
     }
 
-    public String generate(String templateString, Map<String, Object> params, ResourceSet resourceSet) throws Exception {
+    public String generateFromString(String templateString, Map<String, Object> params, ResourceSet resourceSet) throws Exception {
         IModel model = createModel("S", resourceSet);
-        return generate(templateString, params, new ArrayList<IModel>(){{add(model);}});
+        return generateFromString(templateString, params, new ArrayList<IModel>(){{add(model);}});
     }
 
-    public String generate(File templateFile, Map<String, Object> params, ResourceSet resourceSet) throws EglRuntimeException, EolModelLoadingException {
-        IModel model = createModel("S", null, resourceSet);
-        return generate(templateFile, params, new ArrayList<IModel>(){{add(model);}});
+    public String generate(String templatePath, Map<String, Object> params, ResourceSet resourceSet) throws EglRuntimeException, EolModelLoadingException, IOException, URISyntaxException {
+        IModel model = createModel("S", resourceSet);
+        return generate(templatePath, params, new ArrayList<IModel>(){{add(model);}});
     }
 
-    public String generate(File templateFile, Map<String, Object> params, List<IModel> models) throws EglRuntimeException {
+    public String generate(String templatePath, Map<String, Object> params, List<IModel> models) throws EglRuntimeException, IOException, URISyntaxException {
         EglTemplateFactory factory = getEglTemplateFactory(params, models);
-        EglTemplate template = factory.load(templateFile);
+        EglTemplate template = factory.load((new ClassPathResource(templatePath)).getURL().toURI());
         checkTemplateErrors(template);
         String result = template.process();
         return result;
     }
 
-    public String generate(String templateString, Map<String, Object> params, List<IModel> models) throws Exception {
+    public String generateFromString(String templateString, Map<String, Object> params, List<IModel> models) throws Exception {
         EglTemplateFactory factory = getEglTemplateFactory(params, models);
         EglTemplate template = factory.prepare(templateString);
         checkTemplateErrors(template);
@@ -136,9 +137,10 @@ public class Epsilon {
         return result;
     }
 
-    private EglTemplateFactory getEglTemplateFactory(Map<String, Object> params, List<IModel> models) throws EglRuntimeException {
+    private EglTemplateFactory getEglTemplateFactory(Map<String, Object> params, List<IModel> models) throws EglRuntimeException, IOException, URISyntaxException {
         EglTemplateFactory factory = new EglFileGeneratingTemplateFactory();
-        factory.setTemplateRoot(templateRootDir.getAbsolutePath());
+        String templateRoot = (new ClassPathResource(EPSILON_TEMPLATE_ROOT)).getURL().toURI().toString();
+        factory.setTemplateRoot(templateRoot);
         if (models != null) {
             for (IModel model : models) {
                 factory.getContext().getModelRepository().addModel(model);

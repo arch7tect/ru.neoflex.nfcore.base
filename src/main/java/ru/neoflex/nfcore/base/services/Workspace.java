@@ -15,6 +15,12 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Service
 public class Workspace {
@@ -55,7 +61,27 @@ public class Workspace {
     }
 
 
+    public File getFile(String path) {
+        return new File(getRootDir(), path);
+    }
+
     public File getRootDir() {
         return new File(root);
+    }
+
+    public ClassLoader getClassLoader(ClassLoader parent) throws MalformedURLException {
+        URL rootURL = getRootDir().toURI().toURL();
+        return new URLClassLoader(new URL[] {rootURL}, parent);
+    }
+
+    public<R> R withClassLoader(Callable<R> f) throws Exception {
+        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClassLoader(parent));
+        try {
+            return f.call();
+        }
+        finally {
+            Thread.currentThread().setContextClassLoader(parent);
+        }
     }
 }

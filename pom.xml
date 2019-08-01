@@ -24,52 +24,39 @@
         <emf-codegen-version>2.14.0</emf-codegen-version>
     </properties>
 
-	<repositories>
-		<repository>
-			<id>jabylon-repo</id>
-			<name>jabylon-repo</name>
-			<url>http://www.jabylon.org/maven</url>
-		</repository>
-		<repository>
-			<id>IRISA-repo</id>
-			<name>IRISA Repository</name>
-			<url>http://maven.irisa.fr/artifactory/list/kermeta-public-release/</url>
-		</repository>
-	</repositories>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-websocket</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-rest</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -78,33 +65,33 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-ldap</artifactId>
         </dependency>
-		<!-- emf -->
-		<dependency>
-			<groupId>org.emfjson</groupId>
-			<artifactId>emfjson-jackson</artifactId>
-			<version>1.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.emf</groupId>
-			<artifactId>org.eclipse.emf.ecore.xcore.lib</artifactId>
-			<version>${ecore-xcore-lib-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.emfjson</groupId>
-			<artifactId>emfjson-couchdb</artifactId>
-			<version>0.3.0-arch7tect</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.9</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>2.5.7</version>
-			<type>pom</type>
-		</dependency>
+        <!-- emf -->
+        <dependency>
+            <groupId>org.emfjson</groupId>
+            <artifactId>emfjson-jackson</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.emf</groupId>
+            <artifactId>org.eclipse.emf.ecore.xcore.lib</artifactId>
+            <version>${ecore-xcore-lib-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.emfjson</groupId>
+            <artifactId>emfjson-couchdb</artifactId>
+            <version>0.3.0-arch7tect</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.5.7</version>
+            <type>pom</type>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
@@ -133,6 +120,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <layout>ZIP</layout>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -178,192 +168,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
-            <plugin>
-                <groupId>org.eclipse.xtext</groupId>
-                <artifactId>xtext-maven-plugin</artifactId>
-                <version>${xtext-version}</version>
-                <executions>
-                    <execution>
-                        <id>generate-sources</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <languages>
-                        <language>
-                            <setup>org.eclipse.xtext.ecore.EcoreSupport</setup>
-                        </language>
-                        <language>
-                            <setup>org.eclipse.emf.codegen.ecore.xtext.GenModelSupport</setup>
-                        </language>
-                        <language>
-                            <setup>org.eclipse.emf.ecore.xcore.XcoreStandaloneSetup</setup>
-                            <outputConfigurations>
-                                <outputConfiguration>
-                                    <outputDirectory>${project.basedir}/src/main/java-gen</outputDirectory>
-                                </outputConfiguration>
-                            </outputConfigurations>
-                        </language>
-                    </languages>
-                    <sourceRoots>
-                        <root>${basedir}/src/main/resources/metamodel</root>
-                    </sourceRoots>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.eclipse.text</groupId>
-                        <artifactId>org.eclipse.text</artifactId>
-                        <version>3.5.101</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.core</groupId>
-                        <artifactId>org.eclipse.core.resources</artifactId>
-                        <version>3.7.100</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.xtext</groupId>
-                        <artifactId>org.eclipse.xtext.ecore</artifactId>
-                        <version>${xtext-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.codegen.ecore.xtext</artifactId>
-                        <version>${ecore-xtext-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.common</artifactId>
-                        <version>${emf-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.ecore</artifactId>
-                        <version>${emf-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-                        <version>${emf-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.codegen</artifactId>
-                        <version>${emf-codegen-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.codegen.ecore</artifactId>
-                        <version>${emf-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.ecore.xcore</artifactId>
-                        <version>${ecore-xcore-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.ecore.xcore.lib</artifactId>
-                        <version>${ecore-xcore-lib-version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.xtext</groupId>
-                <artifactId>xtext-maven-plugin</artifactId>
-                <version>${xtext-version}</version>
-                <executions>
-                    <execution>
-                        <id>generate-test-sources</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <sourceRoots>
-                        <root>${basedir}/src/test/resources/metamodel</root>
-                    </sourceRoots>
-                    <languages>
-                        <language>
-                            <setup>org.eclipse.xtext.ecore.EcoreSupport</setup>
-                        </language>
-                        <language>
-                            <setup>org.eclipse.emf.codegen.ecore.xtext.GenModelSupport</setup>
-                        </language>
-                        <language>
-                            <setup>org.eclipse.emf.ecore.xcore.XcoreStandaloneSetup</setup>
-                            <outputConfigurations>
-                                <outputConfiguration>
-                                    <outputDirectory>${project.basedir}/src/test/java-gen</outputDirectory>
-                                </outputConfiguration>
-                            </outputConfigurations>
-                        </language>
-                    </languages>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.eclipse.text</groupId>
-                        <artifactId>org.eclipse.text</artifactId>
-                        <version>3.5.101</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.core</groupId>
-                        <artifactId>org.eclipse.core.resources</artifactId>
-                        <version>3.7.100</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.xtext</groupId>
-                        <artifactId>org.eclipse.xtext.ecore</artifactId>
-                        <version>${xtext-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.codegen.ecore.xtext</artifactId>
-                        <version>${ecore-xtext-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.common</artifactId>
-                        <version>${emf-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.ecore</artifactId>
-                        <version>${emf-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-                        <version>${emf-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.codegen</artifactId>
-                        <version>${emf-codegen-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.codegen.ecore</artifactId>
-                        <version>${emf-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.ecore.xcore</artifactId>
-                        <version>${ecore-xcore-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.eclipse.emf</groupId>
-                        <artifactId>org.eclipse.emf.ecore.xcore.lib</artifactId>
-                        <version>${ecore-xcore-lib-version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            -->
             <plugin>
                 <groupId>org.eclipse.xtext</groupId>
                 <artifactId>xtext-maven-plugin</artifactId>
@@ -462,7 +266,8 @@
                 <version>1.7.1</version>
                 <configuration>
                     <stubsOutputDirectory>${project.build.directory}/generated-groovy-stubs</stubsOutputDirectory>
-                    <testStubsOutputDirectory>${project.build.directory}/generated-groovy-test-stubs</testStubsOutputDirectory>
+                    <testStubsOutputDirectory>${project.build.directory}/generated-groovy-test-stubs
+                    </testStubsOutputDirectory>
                 </configuration>
                 <executions>
                     <execution>
@@ -481,5 +286,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
