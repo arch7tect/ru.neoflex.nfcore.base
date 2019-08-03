@@ -173,6 +173,14 @@ public class Store {
         return ref == null ? baseURI.appendSegment("") : URI.createURI(baseURI.toString() + ref);
     }
 
+    public Resource getEmptyResource() {
+        return getEmptyResource(getResourceSet());
+    }
+
+    public Resource getEmptyResource(ResourceSet resourceSet) {
+        return resourceSet.createResource(baseURI.appendSegment(""));
+    }
+
     public String getRefByUri(URI uri) {
         String ref = uri.segment(0);
         String query = uri.query();

@@ -16,3 +16,4 @@ type ByteArray wraps byte[]
 type Password wraps String
 type Text wraps String
 type URL wraps String
+type Name wraps String

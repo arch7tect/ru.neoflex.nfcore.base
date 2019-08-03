@@ -2,6 +2,7 @@ package ru.neoflex.nfcore.base;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -18,13 +19,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.FileCopyUtils;
 import ru.neoflex.nfcore.base.auth.*;
 import ru.neoflex.nfcore.base.services.Context;
+import ru.neoflex.nfcore.base.services.Epsilon;
 import ru.neoflex.nfcore.base.util.DocFinder;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 @RunWith(SpringRunner.class)
@@ -80,7 +81,7 @@ public class EpsilonTests {
     @Test
     public void testImport() throws Exception {
         ResourceSet resourceSet = getUserFinder().execute().getResourceSet();
-        String text = context.getEpsilon().generate("epsilon/ToValid.egl", null, resourceSet);
+        String text = context.getEpsilon().generate("org/eclipse/epsilon/ToValid.egl", null, resourceSet);
         Assert.assertEquals("_12_", text);
     }
 
@@ -95,18 +96,30 @@ public class EpsilonTests {
     public void testClassLoader() throws Exception {
         String text = context.getWorkspace().withClassLoader(()->{
             ResourceSet resourceSet = getUserFinder().execute().getResourceSet();
-            ClassPathResource resource = new ClassPathResource("epsilon/Utils.egl");
-            File newResourceFile = context.getWorkspace().getFile("epsilon/Utils2.egl");
+            ClassPathResource resource = new ClassPathResource(Epsilon.EPSILON_TEMPLATE_ROOT + "/Utils.egl");
+            File newResourceFile = context.getWorkspace().getFile(Epsilon.EPSILON_TEMPLATE_ROOT + "/Utils2.egl");
+            newResourceFile.getParentFile().mkdirs();
             FileCopyUtils.copy(resource.getInputStream(), Files.newOutputStream(newResourceFile.toPath()));
             String program = "[%import \"Utils2.egl\";%]" +
                     "[%=toValidName('12,')%]";
-            File newProgramFile = context.getWorkspace().getFile("epsilon/ToValid2.egl");
+            File newProgramFile = context.getWorkspace().getFile(Epsilon.EPSILON_TEMPLATE_ROOT + "/ToValid2.egl");
             FileCopyUtils.copy(new ByteArrayInputStream(program.getBytes()), Files.newOutputStream(newProgramFile.toPath()));
-            String result = context.getEpsilon().generate("epsilon/ToValid2.egl", null, resourceSet);
+            String result = context.getEpsilon().generate(Epsilon.EPSILON_TEMPLATE_ROOT + "/ToValid2.egl", null, resourceSet);
             newProgramFile.delete();
             newResourceFile.delete();
             return result;
         });
         Assert.assertEquals("_12_", text);
     }
+
+    @Test
+    public void testUserToGroup() throws Exception {
+        ResourceSet inputSet = getUserFinder().execute().getResourceSet();
+        EObject eObject = inputSet.getResources().get(0).getContents().get(0);
+        context.getStore().getEmptyResource().getContents().add(eObject);
+        ResourceSet outputSet = context.getEpsilon().transform(Epsilon.EPSILON_TEMPLATE_ROOT + "/UserToGroup.etl",
+                null, eObject);
+        Assert.assertEquals(1, outputSet.getResources().size());
+    }
+
 }
