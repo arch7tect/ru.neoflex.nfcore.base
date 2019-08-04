@@ -63,19 +63,19 @@ public class EpsilonTests {
     @Test
     public void testModels() throws Exception {
         ResourceSet resourceSet = getUserFinder().execute().getResourceSet();
-        String template = "[%=User.all().select(u|u.name=='SuperAdminUser').first().name%]!";
+        String template = "[%=User.all().select(u|u.name=='admin').first().name%]!";
         for (Resource resource: resourceSet.getResources()) {
             User user = (User) resource.getContents().get(0);
-            if (user.getName().equals("SuperAdminUser")) {
+            if (user.getName().equals("admin")) {
                 String text1 = context.getEpsilon().generateFromString(template, null, resource.getURI(), resourceSet);
-                Assert.assertEquals("SuperAdminUser!", text1);
+                Assert.assertEquals("admin!", text1);
                 String text2 = context.getEpsilon().generateFromString(template, null, user);
-                Assert.assertEquals("SuperAdminUser!", text2);
+                Assert.assertEquals("admin!", text2);
                 break;
             }
         }
         String text = context.getEpsilon().generateFromString(template, null, resourceSet);
-        Assert.assertEquals("SuperAdminUser!", text);
+        Assert.assertEquals("admin!", text);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class EpsilonTests {
 
     @Test
     public void testClassLoader() throws Exception {
-        String text = context.getWorkspace().withClassLoader(()->{
+        String text = context.withClassLoader(()->{
             ResourceSet resourceSet = getUserFinder().execute().getResourceSet();
             ClassPathResource resource = new ClassPathResource(Epsilon.EPSILON_TEMPLATE_ROOT + "/Utils.egl");
             File newResourceFile = context.getWorkspace().getFile(Epsilon.EPSILON_TEMPLATE_ROOT + "/Utils2.egl");
@@ -120,6 +120,9 @@ public class EpsilonTests {
         ResourceSet outputSet = context.getEpsilon().transform(Epsilon.EPSILON_TEMPLATE_ROOT + "/UserToGroup.etl",
                 null, eObject);
         Assert.assertEquals(1, outputSet.getResources().size());
+        for (Resource resource: outputSet.getResources()) {
+            context.getStore().deleteResource(resource.getURI());
+        }
     }
 
 }

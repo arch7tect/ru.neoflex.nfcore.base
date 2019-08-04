@@ -11,11 +11,22 @@ import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EBoolean
 import ru.neoflex.nfcore.base.types.Timestamp
+import ru.neoflex.nfcore.base.types.Name
+import ru.neoflex.nfcore.base.types.Text
+import ru.neoflex.nfcore.base.types.Password
+
+class Audit {
+    String createdBy
+    Timestamp created
+    String modifiedBy
+    Timestamp modified
+}
 
 class Role {
-    String name
-    String description
+    Name name
+    Text description
     contains Permission[] grants opposite role
+    contains Audit audit
 
     op GrantStatus permitted(ActionType actionType, EObject eObject)
 }
@@ -71,8 +82,10 @@ class GrantPermission {
 }
 
 abstract class Authority {
-    String name
+    Name name
+    Text description
     refers Role[] roles
+    contains Audit audit
 }
 
 abstract class Authenticator {
@@ -81,12 +94,11 @@ abstract class Authenticator {
 }
 
 class PasswordAuthenticator extends Authenticator {
-    String password
+    Password password
 }
 
 class User extends Authority {
     String email
-    Timestamp lastLogin
     contains Authenticator[] authenticators opposite user
     refers Group[] groups
 }

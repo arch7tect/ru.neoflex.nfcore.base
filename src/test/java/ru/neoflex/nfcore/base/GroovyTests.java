@@ -29,7 +29,7 @@ public class GroovyTests {
     Context context;
 
     @Test
-    public void invokeEval() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public void invokeEval() throws Exception {
         Role superAdmin = createSuperAdminRole();
         List args = new ArrayList();
         args.add(ActionType.CALL);
@@ -65,7 +65,7 @@ public class GroovyTests {
     }
 
     @Test
-    public void invokeStatic() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public void invokeStatic() throws Exception {
         Role superAdmin = createSuperAdminRole();
         ObjectMapper mapper = EMFMapper.getMapper();
         ObjectNode args = mapper.createObjectNode();

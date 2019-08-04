@@ -5,7 +5,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.neoflex.nfcore.base.components.PackageRegistry;
 import ru.neoflex.nfcore.base.components.Publisher;
+
+import java.util.concurrent.Callable;
 
 @Service
 public class Context {
@@ -21,6 +24,9 @@ public class Context {
     private Publisher publisher;
     @Autowired
     private Epsilon epsilon;
+    @Autowired
+    private
+    PackageRegistry registry;
 
     private static final ThreadLocal<Context> tlContext = new ThreadLocal<Context>();
 
@@ -50,5 +56,14 @@ public class Context {
 
     public Epsilon getEpsilon() {
         return epsilon;
+    }
+
+    public PackageRegistry getRegistry() {
+        return registry;
+    }
+
+    public<R> R withClassLoader(Callable<R> f) throws Exception {
+        setCurrent();
+        return getWorkspace().withClassLoader(f);
     }
 }

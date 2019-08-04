@@ -15,6 +15,8 @@ import org.emfjson.jackson.databind.EMFContext;
 import org.emfjson.jackson.module.EMFModule;
 import org.emfjson.jackson.utils.ValueWriter;
 
+import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
+
 public class EMFMapper {
     public static EMFModule getModule() {
         EMFModule emfModule = new EMFModule();
@@ -37,6 +39,7 @@ public class EMFMapper {
     public static ObjectMapper getMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(getModule());
+        mapper.configure(WRITE_DATES_AS_TIMESTAMPS, false);
         return mapper;
     }
 

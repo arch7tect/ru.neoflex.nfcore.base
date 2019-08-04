@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.neoflex.nfcore.base.components.IPackageRegistry;
+import ru.neoflex.nfcore.base.components.PackageRegistry;
 import ru.neoflex.nfcore.base.components.Publisher;
 import ru.neoflex.nfcore.base.util.EMFMapper;
 
@@ -40,12 +41,12 @@ public class Store {
     String username;
     @Value("${couchdb.password:admin}")
     String password;
-    @Value("${couchdb.dbname:nfmodelrepo}")
+    @Value("${couchdb.dbname:models}")
     String defaultDbname;
     @Autowired
-    List<IPackageRegistry> packageRegistryList;
-    @Autowired
     Publisher publisher;
+    @Autowired
+    PackageRegistry registry;
     DB db;
     URI couchURI;
     URI baseURI;
@@ -135,24 +136,11 @@ public class Store {
         }
     }
 
-    public List<EPackage> getEPackages() {
-        List<EPackage> result = new ArrayList<>();
-        if (packageRegistryList != null) {
-            for (IPackageRegistry registry : packageRegistryList) {
-                List<EPackage> list = registry.getEPackages();
-                if (list != null) {
-                    result.addAll(list);
-                }
-            }
-        }
-        return result;
-    }
-
     public ResourceSet getResourceSet() {
         ResourceSet resourceSet = new ResourceSetImpl();
         resourceSet.getPackageRegistry()
                 .put(EcorePackage.eNS_URI, EcorePackage.eINSTANCE);
-        for (EPackage ePackage : getEPackages()) {
+        for (EPackage ePackage : registry.getEPackages()) {
             resourceSet.getPackageRegistry()
                     .put(ePackage.getNsURI(), ePackage);
         }
@@ -199,16 +187,19 @@ public class Store {
 
     private Resource saveEObject(URI uri, EObject eObject) throws IOException {
         Resource resource = getResourceSet().createResource(uri);
+        resource.getContents().add(eObject);
         Publisher.BeforeSaveEvent beforeSaveEvent = new Publisher.BeforeSaveEvent(eObject);
         publisher.publish(beforeSaveEvent);
         if (beforeSaveEvent.getEObject() != null) {
-            resource.getContents().add(eObject);
+            resource.getContents().add(beforeSaveEvent.getEObject());
+            while (resource.getContents().size() > 1) {
+                resource.getContents().remove(0);
+            }
             resource.save(null);
             if (!resource.getContents().isEmpty()) {
                 EObject savedObject = resource.getContents().get(0);
                 Publisher.AfterSaveEvent afterSaveEvent = new Publisher.AfterSaveEvent(savedObject);
                 publisher.publish(afterSaveEvent);
-                //resource.getContents().clear();
                 if (afterSaveEvent.getEObject() != null) {
                     resource.getContents().add(afterSaveEvent.getEObject());
                     while (resource.getContents().size() > 1) {

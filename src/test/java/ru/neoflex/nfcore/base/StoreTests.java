@@ -28,6 +28,8 @@ public class StoreTests {
         Resource resource2 = context.getStore().getResourceSet().createResource(userResource.getURI());
         resource2.load(null);
         Assert.assertEquals(superAdminUser.getName(), ((User)resource2.getContents().get(0)).getName());
+        context.getStore().deleteResource(roleResource.getURI());
+        context.getStore().deleteResource(userResource.getURI());
     }
 
     public static Role createSuperAdminRole() {

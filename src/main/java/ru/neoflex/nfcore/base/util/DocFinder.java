@@ -5,10 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import ru.neoflex.nfcore.base.services.Store;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class DocFinder {
     public JsonNode getResult() {
@@ -105,6 +108,20 @@ public class DocFinder {
     public static DocFinder create(Store store) {
         DocFinder DocFinder = new DocFinder(store);
         return DocFinder;
+    }
+
+    public static DocFinder create(Store store, EClass eClass) {
+        DocFinder docFinder = DocFinder.create(store);
+        docFinder.selector().with("contents").put("eClass", EcoreUtil.getURI(eClass).toString());
+        return docFinder;
+    }
+
+    public static DocFinder create(Store store, EClass eClass, Map<String, String> attributes) {
+        DocFinder docFinder = DocFinder.create(store, eClass);
+        for (String key: attributes.keySet()) {
+            docFinder.selector().with("contents").put(key, attributes.get(key));
+        }
+        return docFinder;
     }
 
     public DocFinder execute() throws IOException {

@@ -206,11 +206,9 @@ public class Epsilon {
         ececuteScript(scriptPath, params, models, module);
         ResourceSet resourceSet = context.getStore().getResourceSet();
         while (resource.getContents().size() > 0) {
-            Resource r = context.getStore().getEmptyResource();
             EObject object = resource.getContents().get(0);
-            r.getContents().add(object);
-            r.save(null);
-            resourceSet.getResources().add(r);
+            context.getStore().createEObject(object);
+            resourceSet.getResources().add(object.eResource());
         }
         return resourceSet;
     }

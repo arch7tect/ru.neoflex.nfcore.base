@@ -2,6 +2,7 @@ package ru.neoflex.nfcore.base.components;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -78,7 +79,11 @@ public class Publisher {
 
         @Override
         public boolean canHandle(IEvent event) {
-            return event instanceof EObjectEvent && eClass.isInstance(((EObjectEvent)event).eObject);
+            if (event instanceof EObjectEvent) {
+                EObject eObject = ((EObjectEvent)event).eObject;
+                return eClass == null || eClass.isSuperTypeOf(eObject.eClass());
+            }
+            return false;
         }
     }
 

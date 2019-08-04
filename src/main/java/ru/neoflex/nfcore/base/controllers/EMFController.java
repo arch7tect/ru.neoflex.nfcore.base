@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.neoflex.nfcore.base.components.PackageRegistry;
 import ru.neoflex.nfcore.base.services.Context;
 import ru.neoflex.nfcore.base.services.Store;
 import ru.neoflex.nfcore.base.util.DocFinder;
@@ -25,6 +26,8 @@ import java.util.List;
 public class EMFController {
     @Autowired
     Store store;
+    @Autowired
+    PackageRegistry registry;
     @Autowired
     Context context;
     ObjectMapper mapper;
@@ -75,7 +78,7 @@ public class EMFController {
     @GetMapping("/packages")
     JsonNode getPackages() {
         ArrayNode nodes = (new ObjectMapper()).createArrayNode();
-        for (EPackage ePackage: store.getEPackages()) {
+        for (EPackage ePackage: registry.getEPackages()) {
             nodes.add(mapper.valueToTree(ePackage));
         }
         return nodes;
