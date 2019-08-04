@@ -18,7 +18,6 @@ import org.emfjson.jackson.resource.JsonResourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.neoflex.nfcore.base.components.IPackageRegistry;
 import ru.neoflex.nfcore.base.components.PackageRegistry;
 import ru.neoflex.nfcore.base.components.Publisher;
 import ru.neoflex.nfcore.base.util.EMFMapper;
@@ -26,9 +25,7 @@ import ru.neoflex.nfcore.base.util.EMFMapper;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service

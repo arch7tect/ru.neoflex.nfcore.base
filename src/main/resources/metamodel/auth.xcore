@@ -11,7 +11,7 @@ import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EBoolean
 import ru.neoflex.nfcore.base.types.Timestamp
-import ru.neoflex.nfcore.base.types.Name
+import ru.neoflex.nfcore.base.types.QName
 import ru.neoflex.nfcore.base.types.Text
 import ru.neoflex.nfcore.base.types.Password
 
@@ -23,7 +23,7 @@ class Audit {
 }
 
 class Role {
-    Name name
+    QName name
     Text description
     contains Permission[] grants opposite role
     contains Audit audit
@@ -82,7 +82,7 @@ class GrantPermission {
 }
 
 abstract class Authority {
-    Name name
+    QName name
     Text description
     refers Role[] roles
     contains Audit audit

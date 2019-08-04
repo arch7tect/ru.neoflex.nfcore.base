@@ -7,22 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Component
 public class PackageRegistry {
     @Autowired
-    List<IPackageRegistry> packageRegistryList;
+    List<IModuleRegistry> moduleRegistryList = new ArrayList<>();
 
     public List<EPackage> getEPackages() {
         List<EPackage> result = new ArrayList<>();
-        if (packageRegistryList != null) {
-            for (IPackageRegistry registry : packageRegistryList) {
-                List<EPackage> list = registry.getEPackages();
-                if (list != null) {
-                    result.addAll(list);
-                }
+        for (IModuleRegistry registry : moduleRegistryList) {
+            List<EPackage> list = registry.getEPackages();
+            if (list != null) {
+                result.addAll(list);
             }
         }
         return result;

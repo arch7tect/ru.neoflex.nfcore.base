@@ -8,13 +8,13 @@ import ru.neoflex.nfcore.base.types.TypesPackage
 import ru.neoflex.nfcore.base.util.DocFinder
 import ru.neoflex.nfcore.base.util.EMFUtil
 
-class NameExt {
+class QNameExt {
     {
         Context.current.publisher.subscribe(new Publisher.BeforeSaveHandler<EObject>(null) {
             @Override
             EObject handleEObject(EObject eObject) {
                 def id = EMFUtil.getId(eObject.eResource())
-                def nameType = TypesPackage.Literals.NAME;
+                def nameType = TypesPackage.Literals.QNAME;
                 def nameAttrs = eObject.eClass().EAllAttributes.findAll {it.EAttributeType == nameType && !it.isMany()}
                 nameAttrs.each {
                     def eClass = it.EContainingClass
@@ -31,5 +31,5 @@ class NameExt {
             }
         })
     }
-    public NameExt() {}
+    public QNameExt() {}
 }

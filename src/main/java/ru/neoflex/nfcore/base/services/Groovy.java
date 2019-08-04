@@ -3,22 +3,13 @@ package ru.neoflex.nfcore.base.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.neoflex.nfcore.base.components.IPackageRegistry;
-import ru.neoflex.nfcore.base.components.PackageRegistry;
-import ru.neoflex.nfcore.base.components.Publisher;
 
-import javax.annotation.PostConstruct;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class Groovy {

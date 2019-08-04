@@ -4,6 +4,6 @@ import org.eclipse.emf.ecore.EPackage;
 
 import java.util.List;
 
-public interface IPackageRegistry {
+public interface IModuleRegistry {
     List<EPackage> getEPackages();
 }
