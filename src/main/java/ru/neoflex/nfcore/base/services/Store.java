@@ -218,6 +218,10 @@ public class Store {
         return saveEObject(uri, eObject);
     }
 
+    public Resource updateEObject(EObject eObject) throws IOException {
+        return saveEObject(eObject.eResource().getURI(), eObject);
+    }
+
     public Resource loadResource(String ref) throws IOException {
         URI uri = getUriByRef(ref);
         Resource resource = loadResource(uri);
