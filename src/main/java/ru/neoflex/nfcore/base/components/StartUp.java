@@ -17,7 +17,7 @@ public class StartUp {
 
     @PostConstruct
     void init() throws Exception {
-        context.withClassLoader(() -> {
+        context.withContext(() -> {
             for (EClassifier eClassifier: context.getRegistry().getEClassifiers()) {
                 String nsURI = eClassifier.getEPackage().getNsURI();
                 String name = eClassifier.getName();

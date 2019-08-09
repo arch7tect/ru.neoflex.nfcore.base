@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.neoflex.nfcore.base.components.PackageRegistry;
 import ru.neoflex.nfcore.base.components.Publisher;
+import ru.neoflex.nfcore.base.util.FileUtils;
 
 import java.util.concurrent.Callable;
 
@@ -62,8 +63,12 @@ public class Context {
         return registry;
     }
 
-    public<R> R withClassLoader(Callable<R> f) throws Exception {
+    public<R> R withContext(Callable<R> f) throws Exception {
         setCurrent();
-        return getWorkspace().withClassLoader(f);
+        return f.call();
+    }
+
+    public<R> R withClassLoader(Callable<R> f) throws Exception {
+        return FileUtils.withClassLoader(()->{return withContext(f);});
     }
 }

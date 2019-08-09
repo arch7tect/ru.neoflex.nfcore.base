@@ -11,6 +11,7 @@ import org.emfjson.jackson.module.EMFModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.neoflex.nfcore.base.util.FileUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -25,8 +26,6 @@ import java.util.function.Supplier;
 @Service
 public class Workspace {
     private final static Log logger = LogFactory.getLog(Workspace.class);
-    @Value("${workspace.root:${user.dir}/workspace}")
-    String root;
 
     @PostConstruct
     void init() throws GitAPIException {
@@ -66,22 +65,6 @@ public class Workspace {
     }
 
     public File getRootDir() {
-        return new File(root);
-    }
-
-    public ClassLoader getClassLoader(ClassLoader parent) throws MalformedURLException {
-        URL rootURL = getRootDir().toURI().toURL();
-        return new URLClassLoader(new URL[] {rootURL}, parent);
-    }
-
-    public<R> R withClassLoader(Callable<R> f) throws Exception {
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(getClassLoader(parent));
-        try {
-            return f.call();
-        }
-        finally {
-            Thread.currentThread().setContextClassLoader(parent);
-        }
+        return FileUtils.getWorkspaceRootDir();
     }
 }

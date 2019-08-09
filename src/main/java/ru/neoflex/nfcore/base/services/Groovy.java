@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class Groovy {
@@ -32,7 +31,7 @@ public class Groovy {
     }
 
     public Object eval(Object instance, String method, List args) throws Exception {
-        return context.withClassLoader(() -> {
+        return context.withContext(() -> {
             Binding b = new Binding();
             b.setVariable("instance", instance);
             b.setVariable("method", method);
@@ -53,7 +52,7 @@ public class Groovy {
     }
 
     public Object callStatic(String fullClassName, String method, List args) throws Exception {
-        return context.withClassLoader(() -> {
+        return context.withContext(() -> {
             Class scriptClass = Thread.currentThread().getContextClassLoader().loadClass(fullClassName);
             Class[] argsClasses = (Class[]) args.stream().map((Object object) -> object.getClass()).toArray(size->new Class[size]);
             Method declaredMethod = scriptClass.getDeclaredMethod(method, argsClasses);
