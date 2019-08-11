@@ -1,5 +1,6 @@
 package ru.neoflex.nfcore.base.components;
 
+import org.eclipse.emf.ecore.EPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eclipse.emf.ecore.EClassifier;
@@ -18,6 +19,17 @@ public class StartUp {
     @PostConstruct
     void init() throws Exception {
         context.withContext(() -> {
+            for (EPackage ePackage: context.getRegistry().getEPackages()) {
+                String nsURI = ePackage.getNsURI();
+                String name = ePackage.getName();
+                String initClassName = nsURI + ".impl." + name + "PackageExt";
+                try {
+                    Thread.currentThread().getContextClassLoader().loadClass(initClassName).getDeclaredConstructor().newInstance();
+                    logger.info(String.format("%s: instantiated", initClassName));
+                }
+                catch (ClassNotFoundException e) {
+                }
+            }
             for (EClassifier eClassifier: context.getRegistry().getEClassifiers()) {
                 String nsURI = eClassifier.getEPackage().getNsURI();
                 String name = eClassifier.getName();
