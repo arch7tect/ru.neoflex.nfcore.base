@@ -1,5 +1,6 @@
 package ru.neoflex.nfcore.base.components;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.ecore.EPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ public class StartUp {
         context.withContext(() -> {
             for (EPackage ePackage: context.getRegistry().getEPackages()) {
                 String nsURI = ePackage.getNsURI();
-                String name = ePackage.getName();
+                String name = StringUtils.capitalize(ePackage.getName());
                 String initClassName = nsURI + ".impl." + name + "PackageExt";
                 try {
                     Thread.currentThread().getContextClassLoader().loadClass(initClassName).getDeclaredConstructor().newInstance();
@@ -32,7 +33,7 @@ public class StartUp {
             }
             for (EClassifier eClassifier: context.getRegistry().getEClassifiers()) {
                 String nsURI = eClassifier.getEPackage().getNsURI();
-                String name = eClassifier.getName();
+                String name = StringUtils.capitalize(eClassifier.getName());
                 String initClassName = nsURI + ".impl." + name + "Ext";
                 try {
                     Thread.currentThread().getContextClassLoader().loadClass(initClassName).getDeclaredConstructor().newInstance();
