@@ -14,7 +14,7 @@ import ru.neoflex.nfcore.base.util.EMFUtil
 
 import java.sql.Timestamp
 
-class AuditExt extends AuditImpl {
+class AuditInit extends AuditImpl {
     {
         // set audit info before save EObject
         Context.current.publisher.subscribe(new Publisher.BeforeSaveHandler<EObject>(null) {

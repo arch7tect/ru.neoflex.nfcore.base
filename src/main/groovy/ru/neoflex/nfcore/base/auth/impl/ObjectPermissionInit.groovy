@@ -2,14 +2,14 @@ package ru.neoflex.nfcore.base.auth.impl
 
 import org.eclipse.emf.ecore.EObject
 import ru.neoflex.nfcore.base.auth.ActionType
-import ru.neoflex.nfcore.base.auth.ClassPermission
 import ru.neoflex.nfcore.base.auth.GrantStatus
+import ru.neoflex.nfcore.base.auth.ObjectPermission
 
-class ClassPermissionExt extends ClassPermissionImpl{
+class ObjectPermissionInit extends ObjectPermissionImpl {
     {
-        ClassPermission.metaClass.permitted = { ActionType actionType, EObject eObject ->
-            ClassPermission permission = (ClassPermission) delegate
-            if (eObject.eClass() == permission.getTheClass() &&
+        ObjectPermission.metaClass.permitted = { ActionType actionType, EObject eObject ->
+            ObjectPermission permission = (ObjectPermission) delegate;
+            if (eObject == permission.getEObject() &&
                     (permission.actionTypes.contains(ActionType.ALL) || permission.actionTypes.contains(actionType))) {
                 return permission.grantStatus
             }

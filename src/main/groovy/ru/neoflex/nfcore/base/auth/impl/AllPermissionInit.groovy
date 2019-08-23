@@ -5,7 +5,7 @@ import ru.neoflex.nfcore.base.auth.ActionType
 import ru.neoflex.nfcore.base.auth.AllPermission
 import ru.neoflex.nfcore.base.auth.GrantStatus
 
-class AllPermissionExt extends AllPermissionImpl {
+class AllPermissionInit extends AllPermissionImpl {
     {
         AllPermission.metaClass.permitted = { ActionType actionType, EObject eObject ->
             AllPermission permission = (AllPermission) delegate;

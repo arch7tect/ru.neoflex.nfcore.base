@@ -39,3 +39,5 @@ type Text wraps String
 type URL wraps String
 type QName wraps String
 type JSON wraps String
+type Caption wraps String
+

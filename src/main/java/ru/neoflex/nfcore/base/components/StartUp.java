@@ -23,7 +23,7 @@ public class StartUp {
             for (EPackage ePackage: context.getRegistry().getEPackages()) {
                 String nsURI = ePackage.getNsURI();
                 String name = StringUtils.capitalize(ePackage.getName());
-                String initClassName = nsURI + ".impl." + name + "PackageExt";
+                String initClassName = nsURI + ".impl." + name + "PackageInit";
                 try {
                     Thread.currentThread().getContextClassLoader().loadClass(initClassName).getDeclaredConstructor().newInstance();
                     logger.info(String.format("%s: instantiated", initClassName));
@@ -34,7 +34,7 @@ public class StartUp {
             for (EClassifier eClassifier: context.getRegistry().getEClassifiers()) {
                 String nsURI = eClassifier.getEPackage().getNsURI();
                 String name = StringUtils.capitalize(eClassifier.getName());
-                String initClassName = nsURI + ".impl." + name + "Ext";
+                String initClassName = nsURI + ".impl." + name + "Init";
                 try {
                     Thread.currentThread().getContextClassLoader().loadClass(initClassName).getDeclaredConstructor().newInstance();
                     logger.info(String.format("%s: instantiated", initClassName));
