@@ -5,7 +5,7 @@ import ru.neoflex.nfcore.base.auth.ActionType
 import ru.neoflex.nfcore.base.auth.GrantStatus
 import ru.neoflex.nfcore.base.auth.Role
 
-class RoleExt extends RoleImpl {
+class RoleInit extends RoleImpl {
     {
         Role.metaClass.permitted = { ActionType actionType, EObject eObject ->
             Role role = (Role) delegate;

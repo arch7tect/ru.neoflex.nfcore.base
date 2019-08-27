@@ -17,7 +17,7 @@ import ru.neoflex.nfcore.base.util.DocFinder
 
 import java.sql.Timestamp
 
-class UserExt extends UserImpl {
+class UserInit extends UserImpl {
     static Role createSU() {
         def superUserRole = AuthFactory.eINSTANCE.createRole()
         superUserRole.setName("su")

@@ -5,7 +5,7 @@ import ru.neoflex.nfcore.base.auth.ActionType
 import ru.neoflex.nfcore.base.auth.GrantStatus
 import ru.neoflex.nfcore.base.auth.PackagePermission
 
-class PackagePermissionExt extends PackagePermissionImpl {
+class PackagePermissionInit extends PackagePermissionImpl {
     {
         PackagePermission.metaClass.permitted = { ActionType actionType, EObject eObject ->
             PackagePermission permission = (PackagePermission) delegate;

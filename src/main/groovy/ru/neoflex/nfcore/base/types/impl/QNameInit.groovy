@@ -8,7 +8,7 @@ import ru.neoflex.nfcore.base.types.TypesPackage
 import ru.neoflex.nfcore.base.util.DocFinder
 import ru.neoflex.nfcore.base.util.EMFUtil
 
-class QNameExt {
+class QNameInit {
     {
         Context.current.publisher.subscribe(new Publisher.BeforeSaveHandler<EObject>(null) {
             @Override
@@ -31,5 +31,5 @@ class QNameExt {
             }
         })
     }
-    public QNameExt() {}
+    public QNameInit() {}
 }
