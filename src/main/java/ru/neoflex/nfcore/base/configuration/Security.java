@@ -59,6 +59,7 @@ public class Security extends WebSecurityConfigurerAdapter {
                     .httpBasic()
                 .and()
                      .authorizeRequests()
+                     .antMatchers("/locales/**").permitAll()
                      .anyRequest().authenticated()
                 .and()
                      .cors().configurationSource(source)
