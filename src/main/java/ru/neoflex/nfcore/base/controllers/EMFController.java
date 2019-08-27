@@ -96,5 +96,11 @@ public class EMFController {
         resourceSetNode.put("bookmark", docFinder.getBookmark());
         return resourceSetNode;
     }
+
+    @PostMapping("/call")
+    Object find(@RequestParam String ref, @RequestParam String method, @RequestBody List args) throws Exception {
+        Resource resource = store.loadResource(ref);
+        return context.getGroovy().eval(resource.getContents().get(0), method, args);
+    }
 }
 
