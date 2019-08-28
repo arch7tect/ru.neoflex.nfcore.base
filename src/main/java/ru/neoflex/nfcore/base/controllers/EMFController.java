@@ -98,7 +98,7 @@ public class EMFController {
     }
 
     @PostMapping("/call")
-    Object find(@RequestParam String ref, @RequestParam String method, @RequestBody List args) throws Exception {
+    Object call(@RequestParam String ref, @RequestParam String method, @RequestBody List<Object> args) throws Exception {
         Resource resource = store.loadResource(ref);
         return context.getGroovy().eval(resource.getContents().get(0), method, args);
     }
