@@ -56,11 +56,13 @@ public class Security extends WebSecurityConfigurerAdapter {
         config.addAllowedMethod("PATCH");
         source.registerCorsConfiguration("/**", config);
         http
-                    .httpBasic()
+                .httpBasic()
                 .and()
-                     .authorizeRequests()
-                     .antMatchers("/locales/**").permitAll()
-                     .anyRequest().authenticated()
+                    .authorizeRequests()
+                    .antMatchers("/locales/**").permitAll()
+                    .antMatchers("/emf/*").permitAll()
+                    .antMatchers("/system/user/**").authenticated()
+                    .antMatchers("/app/**").authenticated()
                 .and()
                      .cors().configurationSource(source)
                 .and()
