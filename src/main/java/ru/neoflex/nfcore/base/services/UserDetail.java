@@ -39,7 +39,7 @@ public class UserDetail implements UserDetailsService {
             return null;
         }
 
-        DocFinder docFinder = DocFinder.create(store);
+        DocFinder docFinder = DocFinder.create(store, Integer.MAX_VALUE);
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode selector = objectMapper.createObjectNode();
         selector

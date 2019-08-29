@@ -48,7 +48,7 @@ public class EpsilonTests {
 
     public DocFinder getUserFinder() {
         URI classURI = EcoreUtil.getURI(AuthPackage.Literals.USER);
-        DocFinder docFinder = DocFinder.create(context.getStore());
+        DocFinder docFinder = DocFinder.create(context.getStore(), Integer.MAX_VALUE);
         docFinder.selector().with("contents").put("eClass", classURI.toString());
         return docFinder;
     }
