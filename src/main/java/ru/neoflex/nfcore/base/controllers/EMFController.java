@@ -86,7 +86,7 @@ public class EMFController {
 
     @PostMapping("/find")
     JsonNode find(@RequestBody JsonNode selector) throws IOException {
-        DocFinder docFinder = DocFinder.create(store, Integer.MAX_VALUE)
+        DocFinder docFinder = DocFinder.create(store)
                 .executionStats(true)
                 .selector(selector)
                 .execute();

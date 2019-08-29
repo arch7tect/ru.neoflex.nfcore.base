@@ -28,14 +28,13 @@ public class DocFinder {
     ObjectNode rootNode;
     ArrayNode fields;
     ArrayNode sort;
-    Integer limit_;
     private ObjectNode result;
 
-    private DocFinder(Store store, Integer limit_) {
+    private DocFinder(Store store) {
         this.store = store;
         this.mapper = EMFMapper.getMapper();
         this.rootNode = mapper.createObjectNode();
-        this.limit(limit_);
+        this.limit(Integer.MAX_VALUE);
     }
 
     public DocFinder selector(JsonNode selector) {
@@ -107,13 +106,13 @@ public class DocFinder {
         return this;
     }
 
-    public static DocFinder create(Store store, Integer limit) {
-        DocFinder DocFinder = new DocFinder(store, limit);
+    public static DocFinder create(Store store) {
+        DocFinder DocFinder = new DocFinder(store);
         return DocFinder;
     }
 
     public static DocFinder create(Store store, EClass eClass) {
-        DocFinder docFinder = DocFinder.create(store, Integer.MAX_VALUE);
+        DocFinder docFinder = DocFinder.create(store);
         docFinder.selector().with("contents").put("eClass", EcoreUtil.getURI(eClass).toString());
         return docFinder;
     }

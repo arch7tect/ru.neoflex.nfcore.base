@@ -124,7 +124,7 @@ public class Security extends WebSecurityConfigurerAdapter {
                         }
 
                         //Get roles from Databases (from roles and from groups)
-                        DocFinder docFinder = DocFinder.create(store, Integer.MAX_VALUE);
+                        DocFinder docFinder = DocFinder.create(store);
                         ObjectMapper objectMapper = new ObjectMapper();
                         ObjectNode selector = objectMapper.createObjectNode();
                         selector
