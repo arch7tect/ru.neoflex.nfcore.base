@@ -34,6 +34,7 @@ public class DocFinder {
         this.store = store;
         this.mapper = EMFMapper.getMapper();
         this.rootNode = mapper.createObjectNode();
+        this.limit(Integer.MAX_VALUE);
     }
 
     public DocFinder selector(JsonNode selector) {
