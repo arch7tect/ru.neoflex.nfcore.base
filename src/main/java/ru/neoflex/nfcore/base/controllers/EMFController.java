@@ -98,9 +98,10 @@ public class EMFController {
     }
 
     @PostMapping("/call")
-    Object call(@RequestParam String ref, @RequestParam String method, @RequestBody List<Object> args) throws Exception {
+    JsonNode call(@RequestParam String ref, @RequestParam String method, @RequestBody List<Object> args) throws Exception {
         Resource resource = store.loadResource(ref);
-        return context.getGroovy().eval(resource.getContents().get(0), method, args);
+        Object result =  context.getGroovy().eval(resource.getContents().get(0), method, args);
+        return mapper.valueToTree(result);
     }
 }
 
